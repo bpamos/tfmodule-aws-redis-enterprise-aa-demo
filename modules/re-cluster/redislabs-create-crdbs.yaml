@@ -1,0 +1,11 @@
+---
+- hosts: all[0]
+  serial: 1
+  vars_prompt:
+    - name: username
+      prompt: "username"
+      private: no
+    - name: password
+      prompt: "password"
+  roles:
+    - create_crdbs

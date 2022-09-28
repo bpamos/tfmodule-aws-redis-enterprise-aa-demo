@@ -1,0 +1,34 @@
+- name: getting crdb_databases from {{ inventory_hostname }}
+  uri:
+    url: "https://{{ inventory_hostname }}:9443/v1/crdbs"
+    user: "{{ username }}"
+    password: "{{ password }}"
+    method: GET
+    force_basic_auth: yes
+    validate_certs: no
+    return_content: yes
+    follow_redirects: all
+  register: result
+
+- name: checking if crdb_database {{ item.name }} already exists
+  set_fact:
+    crdb_guid: "{{ result.json | json_query(query) | first | default(\"\") }}"
+  vars:
+    query: "crdb_list[?name=='{{ item.name }}'].guid"
+  ignore_errors: yes
+
+- name: creating crdb from {{ inventory_hostname }}
+  uri: 
+    url: "https://{{ inventory_hostname }}:9443/v1/crdbs"
+    user: "{{ username }}"
+    password: "{{ password }}"
+    method: POST
+    body: "{{ item }}"
+    body_format: json
+    force_basic_auth: yes
+    validate_certs: no
+    return_content: yes
+    follow_redirects: all
+  ignore_errors: yes
+  when: crdb_guid == ""
+
