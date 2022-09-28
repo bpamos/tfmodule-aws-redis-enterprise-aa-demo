@@ -1,0 +1,15 @@
+---
+re_databases:
+  - name: "Test-DB"
+    memory_size: 104857600
+    port: 16379
+    shards_count: 22 
+    sharding: true
+#    replication: true
+    authentication_redis_pass: "F0rceBw!thU"
+    shard_key_regex: 
+    - regex: ".*{(?<tag>.*)}.*"
+    - regex: "(?<tag>.*)"
+  - name: "Test-DB2"
+    memory_size:  104857600
+    port: 12379
