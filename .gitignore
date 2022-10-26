@@ -4,6 +4,8 @@
 # Local .terraform directories
 **/.terraform/*
 
+**/re-license.txt
+
 # .tfstate files
 *.tfstate
 *.tfstate.*
