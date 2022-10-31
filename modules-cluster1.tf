@@ -144,3 +144,31 @@ output "re-cluster-username" {
 output "re-cluster-password" {
   value = module.create-cluster1.re-cluster-password
 }
+
+############## RE Cluster CRDB databases
+#### Ansible Playbook runs locally to create the CRDB db
+module "create-crdbs" {
+  source               = "./modules/re-crdb"
+  providers = {
+      aws = aws.a
+    }
+  #ssh_key_path         = var.ssh_key_path1
+  #region               = var.region1
+  re_cluster_username  = var.re_cluster_username
+  re_cluster_password  = var.re_cluster_password
+  ### vars pulled from previous modules
+  #vpc_name             = module.vpc1.vpc-name
+  #re-node-internal-ips = module.nodes1.re-data-node-internal-ips
+  #re-node-eip-ips      = module.nodes1.re-data-node-eips
+  #re-data-node-eip-public-dns   = module.nodes1.re-data-node-eip-public-dns
+  dns_fqdn1             = module.dns1.dns-ns-record-name
+  dns_fqdn2             = module.dns2.dns-ns-record-name #getting cluster2 name from other module
+  
+  depends_on           = [module.vpc1, 
+                          module.nodes1, 
+                          module.dns1, 
+                          module.create-cluster1, 
+                          module.create-cluster2]
+}
+
+#### CRDB Outputs

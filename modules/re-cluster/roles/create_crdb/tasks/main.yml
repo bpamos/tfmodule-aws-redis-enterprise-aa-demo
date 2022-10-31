@@ -14,7 +14,7 @@
   set_fact:
     crdb_guid: "{{ result.json | json_query(query) | first | default(\"\") }}"
   vars:
-    query: "crdb_list[?name=='{{ item.name }}'].guid"
+    query: "crdbs[?name=='{{ item.name }}'].guid"
   ignore_errors: yes
 
 - name: creating crdb from {{ inventory_hostname }}
@@ -31,4 +31,25 @@
     follow_redirects: all
   ignore_errors: yes
   when: crdb_guid == ""
+  register: result2
 
+- name: task creation id
+  debug: 
+    msg: "{{ result2.json.id }}"
+  when: crdb_guid == ""
+
+- name: check if crdb {{ item.default_db_config.name }} was created successfully
+  uri: 
+    url: "https://{{ inventory_hostname }}:9443/v1/crdb_tasks/{{ result2.json.id }}"
+    user: "{{ username }}"
+    password: "{{ password }}"
+    method: GET
+    force_basic_auth: yes
+    validate_certs: no
+    return_content: yes
+    follow_redirects: all
+  when: crdb_guid == ""
+  register: result3
+  until: result3.json.status == 'finished'
+  delay: 10
+  retries: 10
