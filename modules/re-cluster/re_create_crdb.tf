@@ -15,15 +15,3 @@
 
 # . source.sh
 # ansible-playbook -i $inventory_file redislabs-create-crdbs.yaml -e @$extra_vars -e @$crdbs_file
-
-# #Run ansible-playbook to create crdb
-# resource "null_resource" "ansible_create_crdb_restapi1" {
-#   provisioner "local-exec" {
-#     command = "python3 ${path.module}/crdbs/crdb.py"
-#     }
-#     depends_on = [local_file.dynamic_inventory_ini, 
-#                   time_sleep.wait_30_seconds,
-#                   time_sleep.wait_60_seconds_license_file, 
-#                   local_file.extra_vars,
-#                   local_file.license_file]
-# }
