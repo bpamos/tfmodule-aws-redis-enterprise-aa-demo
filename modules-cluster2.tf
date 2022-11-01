@@ -20,8 +20,8 @@ module "vpc2" {
     owner              = var.owner
     region             = var.region2
     base_name          = var.base_name2
-    vpc_cidr           = var.vpc_cidr
-    subnet_cidr_blocks = var.subnet_cidr_blocks
+    vpc_cidr           = var.vpc_cidr2
+    subnet_cidr_blocks = var.subnet_cidr_blocks2
     subnet_azs         = var.subnet_azs2
 }
 
@@ -41,6 +41,33 @@ output "vpc_name2" {
   value = module.vpc2.vpc-name
 }
 
+output "route-table-id2" {
+  description = "route table id"
+  value = module.vpc2.route-table-id
+}
+
+module "vpc-peering-routetable2" {
+    source             = "./modules/vpc-peering-routetable"
+    providers = {
+      aws = aws.b
+    }
+ 
+    #main_vpc_id               = module.vpc1.vpc-id
+    peer_vpc_id               = module.vpc2.vpc-id
+    main_vpc_route_table_id   = module.vpc2.route-table-id
+    vpc_peering_connection_id = module.vpc-peering-requestor.vpc_peering_connection_id
+    # main_vpc_cidr      = var.vpc_cidr1
+    peer_vpc_cidr             = var.vpc_cidr1
+
+    depends_on = [
+      module.vpc1, 
+      module.vpc2, 
+      module.vpc-peering-requestor,
+      module.vpc-peering-acceptor
+    ]
+}
+
+
 ########### Node Module
 #### Create RE and Test nodes
 #### Ansible playbooks configure and install RE software on nodes
@@ -52,7 +79,7 @@ module "nodes2" {
     }
     owner              = var.owner
     region             = var.region2
-    vpc_cidr           = var.vpc_cidr
+    vpc_cidr           = var.vpc_cidr2
     subnet_azs         = var.subnet_azs2
     ssh_key_name       = var.ssh_key_name2
     ssh_key_path       = var.ssh_key_path2
@@ -143,4 +170,28 @@ output "re-cluster-username2" {
 
 output "re-cluster-password2" {
   value = module.create-cluster2.re-cluster-password
+}
+
+
+############## RE Cluster CRDB databases memtier benchmark
+#### Ansible Playbook runs locally to run the memtier benchmark cmds
+module "memtier_benchmark2" {
+  source               = "./modules/re-crdb-memtier"
+  providers = {
+      aws = aws.b
+    }
+  test-node-count    = var.test-node-count
+  vpc_name           = module.vpc2.vpc-name
+  ssh_key_path       = var.ssh_key_path2
+  crdb_port          = var.crdb_port
+  ### vars pulled from previous modules
+  crdb_endpoint_cluster  = module.create-crdbs.crdb_endpoint_cluster2
+  #crdb_endpoint_cluster2  = module.create-crdbs.crdb_endpoint_cluster2
+  memtier_data_load_cluster = var.memtier_data_load_cluster2
+  
+  depends_on           = [module.vpc1, 
+                          module.nodes1, 
+                          module.dns1, 
+                          module.create-cluster1, 
+                          module.create-cluster2]
 }

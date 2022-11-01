@@ -20,8 +20,8 @@ module "vpc1" {
     owner              = var.owner
     region             = var.region1
     base_name          = var.base_name1
-    vpc_cidr           = var.vpc_cidr
-    subnet_cidr_blocks = var.subnet_cidr_blocks
+    vpc_cidr           = var.vpc_cidr1
+    subnet_cidr_blocks = var.subnet_cidr_blocks1
     subnet_azs         = var.subnet_azs1
 }
 
@@ -41,6 +41,76 @@ output "vpc_name1" {
   value = module.vpc1.vpc-name
 }
 
+output "route-table-id1" {
+  description = "route table id"
+  value = module.vpc1.route-table-id
+}
+
+######
+### VPC PEERING
+
+module "vpc-peering-requestor" {
+    source             = "./modules/vpc-peering-requestor"
+    providers = {
+      aws = aws.a
+    }
+    main_region        = var.region1
+    peer_region        = var.region2
+    main_vpc_id        = module.vpc1.vpc-id
+    peer_vpc_id        = module.vpc2.vpc-id
+    vpc_name1          = module.vpc1.vpc-name
+    vpc_name2          = module.vpc2.vpc-name
+    owner              = var.owner
+
+    depends_on = [
+      module.vpc1, module.vpc2
+    ]
+}
+
+output "vpc_peering_connection_id" {
+  description = "get the VPC Name tag"
+  value = module.vpc-peering-requestor.vpc_peering_connection_id
+}
+
+module "vpc-peering-acceptor" {
+    source             = "./modules/vpc-peering-acceptor"
+    providers = {
+      aws = aws.b
+    }
+    #aws_creds          = var.aws_creds
+    main_region        = var.region1
+    peer_region        = var.region2
+    main_vpc_id        = module.vpc1.vpc-id
+    peer_vpc_id        = module.vpc2.vpc-id
+    vpc_peering_connection_id = module.vpc-peering-requestor.vpc_peering_connection_id
+    #vpc_name1          = module.vpc1.vpc-name
+    #vpc_name2          = module.vpc2.vpc-name
+    #owner              = var.owner
+
+    depends_on = [
+      module.vpc1, module.vpc2, module.vpc-peering-requestor
+    ]
+}
+
+module "vpc-peering-routetable1" {
+    source             = "./modules/vpc-peering-routetable"
+    providers = {
+      aws = aws.a
+    }
+    peer_vpc_id               = module.vpc2.vpc-id
+    main_vpc_route_table_id   = module.vpc1.route-table-id
+    vpc_peering_connection_id = module.vpc-peering-requestor.vpc_peering_connection_id
+    peer_vpc_cidr      = var.vpc_cidr2
+
+    depends_on = [
+      module.vpc1, 
+      module.vpc2, 
+      module.vpc-peering-requestor,
+      module.vpc-peering-acceptor
+    ]
+}
+
+
 ########### Node Module
 #### Create RE and Test nodes
 #### Ansible playbooks configure and install RE software on nodes
@@ -52,7 +122,7 @@ module "nodes1" {
     }
     owner              = var.owner
     region             = var.region1
-    vpc_cidr           = var.vpc_cidr
+    vpc_cidr           = var.vpc_cidr1
     subnet_azs         = var.subnet_azs1
     ssh_key_name       = var.ssh_key_name1
     ssh_key_path       = var.ssh_key_path1
@@ -172,3 +242,42 @@ module "create-crdbs" {
 }
 
 #### CRDB Outputs
+
+output "crdb_endpoint_cluster1" {
+  value = module.create-crdbs.crdb_endpoint_cluster1
+}
+
+output "crdb_endpoint_cluster2" {
+  value = module.create-crdbs.crdb_endpoint_cluster2
+}
+
+output "crdb_cluster1_redis_cli_cmd" {
+  value = module.create-crdbs.crdb_cluster1_redis_cli_cmd
+}
+
+output "crdb_cluster2_redis_cli_cmd" {
+  value = module.create-crdbs.crdb_cluster2_redis_cli_cmd
+}
+
+############## RE Cluster CRDB databases memtier benchmark
+#### Ansible Playbook runs locally to run the memtier benchmark cmds
+module "memtier_benchmark1" {
+  source               = "./modules/re-crdb-memtier"
+  providers = {
+      aws = aws.a
+    }
+  test-node-count    = var.test-node-count
+  vpc_name           = module.vpc1.vpc-name
+  ssh_key_path       = var.ssh_key_path1
+  crdb_port          = var.crdb_port
+  ### vars pulled from previous modules
+  crdb_endpoint_cluster  = module.create-crdbs.crdb_endpoint_cluster1
+  #crdb_endpoint_cluster2  = module.create-crdbs.crdb_endpoint_cluster2
+  memtier_data_load_cluster = var.memtier_data_load_cluster1
+  
+  depends_on           = [module.vpc1, 
+                          module.nodes1, 
+                          module.dns1, 
+                          module.create-cluster1, 
+                          module.create-cluster2]
+}
