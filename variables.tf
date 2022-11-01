@@ -44,15 +44,26 @@ variable "base_name2" {
     default = "redisuser2-tf"
 }
 
-variable "vpc_cidr" {
-    description = "vpc-cidr"
+variable "vpc_cidr1" {
+    description = "vpc-cidr1"
     default = "10.0.0.0/16"
 }
 
-variable "subnet_cidr_blocks" {
+variable "vpc_cidr2" {
+    description = "vpc-cidr2"
+    default = "10.1.0.0/16"
+}
+
+variable "subnet_cidr_blocks1" {
     type = list(any)
-    description = "subnet_cidr_block"
+    description = "subnet_cidr_block1"
     default = ["10.0.1.0/24","10.0.2.0/24","10.0.3.0/24"]
+}
+
+variable "subnet_cidr_blocks2" {
+    type = list(any)
+    description = "subnet_cidr_block2"
+    default = ["10.1.1.0/24","10.1.2.0/24","10.1.3.0/24"]
 }
 
 variable "subnet_azs1" {
@@ -376,4 +387,55 @@ variable "license_file" {
     default     = <<EOF
     paste license file here
     EOF
+}
+
+
+
+#### RE CRDB DB variable inputs
+variable "crdb_db_name" {
+    description = "redis enterprise cluster password"
+    default     = "crdb-test1"
+}
+
+variable "crdb_port" {
+    description = "redis enterprise cluster password"
+    default     = 14017
+}
+
+variable "crdb_memory_size" {
+    description = "redis enterprise cluster password"
+    default     = 5024000000
+}
+
+variable "crdb_replication" {
+    description = "redis enterprise cluster password"
+    default     = "True"
+}
+
+variable "crdb_aof_policy" {
+    description = "redis enterprise cluster password"
+    default     = "appendfsync-every-sec"
+}
+
+variable "crdb_sharding" {
+    description = "redis enterprise cluster password"
+    default     = "True"
+}
+
+variable "crdb_shards_count" {
+    description = "redis enterprise cluster password"
+    default     = 2
+}
+
+
+##### Memtier Benchmark
+
+variable "memtier_data_load_cluster1" {
+  description = "dfa"
+  default = "."
+}
+
+variable "memtier_data_load_cluster2" {
+  description = "dfa"
+  default = "."
 }
