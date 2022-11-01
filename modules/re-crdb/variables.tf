@@ -1,15 +1,4 @@
 #### Required Variables
-# variable "region" {
-#     description = "AWS region"
-# }
-
-# variable "ssh_key_path" {
-#     description = "name of ssh key to be added to instance"
-# }
-
-# variable "vpc_name" {
-#   description = "The VPC Project Name tag"
-# }
 
 ####### Create Cluster Variables
 ####### Node and DNS outputs used to Create Cluster
@@ -23,24 +12,6 @@ variable "dns_fqdn2" {
     description = "."
     default = ""
 }
-
-# variable "re-node-internal-ips" {
-#     type = list
-#     description = "."
-#     default = []
-# }
-
-# variable "re-node-eip-ips" {
-#     type = list
-#     description = "."
-#     default = []
-# }
-
-# variable "re-data-node-eip-public-dns" {
-#     type = list
-#     description = "."
-#     default = []
-# }
 
 ############# Create RE Cluster Variables
 
