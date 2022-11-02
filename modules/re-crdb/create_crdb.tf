@@ -1,7 +1,4 @@
 
-
-
-
 ##### Generate ansible inventory.ini for any number of nodes
 resource "local_file" "crdb_tpl" {
     content  = templatefile("${path.module}/crdbs/crdb.tpl", {
@@ -25,6 +22,10 @@ resource "local_file" "crdb_tpl" {
     filename = "${path.module}/crdbs/crdb.py"
 }
 
+#### Sleeper, just to make sure nodes module is complete and everything is installed
+resource "time_sleep" "wait_30_seconds_crdb" {
+  create_duration = "30s"
+}
 
 #Run ansible-playbook to create crdb
 resource "null_resource" "ansible_create_crdb_restapi" {
@@ -33,6 +34,7 @@ resource "null_resource" "ansible_create_crdb_restapi" {
     }
 
     depends_on = [
-      local_file.crdb_tpl
+      local_file.crdb_tpl,
+      time_sleep.wait_30_seconds_crdb
     ]
 }
