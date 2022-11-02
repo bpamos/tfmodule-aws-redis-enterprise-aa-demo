@@ -9,6 +9,7 @@ resource "time_sleep" "wait_10_seconds" {
 resource "local_file" "memtier-benchmark" {
     content  = templatefile("${path.module}/memtier_playbook.yaml.tpl", {
       memtier_data_load_cluster = var.memtier_data_load_cluster
+      memtier_benchmark_cmd     = var.memtier_benchmark_cmd
       crdb_endpoint_cluster     = var.crdb_endpoint_cluster
       crdb_port                 = var.crdb_port
     })
