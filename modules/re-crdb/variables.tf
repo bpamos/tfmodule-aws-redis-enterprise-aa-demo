@@ -4,12 +4,12 @@
 ####### Node and DNS outputs used to Create Cluster
 #### created during node module and used as outputs (no input required)
 variable "dns_fqdn1" {
-    description = "."
+    description = "Cluster 1 FQDN"
     default = ""
 }
 
 variable "dns_fqdn2" {
-    description = "."
+    description = "Cluster 2 FQDN"
     default = ""
 }
 
@@ -28,29 +28,29 @@ variable "re_cluster_password" {
 
 #### RE CRDB DB variable inputs
 variable "crdb_db_name" {
-    description = "redis enterprise cluster password"
+    description = "crdb db name"
 }
 
 variable "crdb_port" {
-    description = "redis enterprise cluster password"
+    description = "crdb port"
 }
 
 variable "crdb_memory_size" {
-    description = "redis enterprise cluster password"
+    description = "crdb memory size in bytes"
 }
 
 variable "crdb_replication" {
-    description = "redis enterprise cluster password"
+    description = "replication yes no"
 }
 
 variable "crdb_aof_policy" {
-    description = "redis enterprise cluster password"
+    description = "aof policy"
 }
 
 variable "crdb_sharding" {
-    description = "redis enterprise cluster password"
+    description = "sharding yes no"
 }
 
 variable "crdb_shards_count" {
-    description = "redis enterprise cluster password"
+    description = "how many master shards"
 }
