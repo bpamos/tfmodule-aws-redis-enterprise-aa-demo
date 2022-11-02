@@ -24,3 +24,8 @@ variable "memtier_data_load_cluster" {
   description = "dfa"
   default = "."
 }
+
+variable "memtier_benchmark_cmd" {
+  description = "dfa"
+  default = "."
+}
