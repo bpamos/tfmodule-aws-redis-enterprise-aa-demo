@@ -399,7 +399,7 @@ variable "crdb_db_name" {
 
 variable "crdb_port" {
     description = "redis enterprise cluster password"
-    default     = 14017
+    default     = 12000
 }
 
 variable "crdb_memory_size" {
@@ -436,6 +436,16 @@ variable "memtier_data_load_cluster1" {
 }
 
 variable "memtier_data_load_cluster2" {
+  description = "dfa"
+  default = "."
+}
+
+variable "memtier_benchmark_cluster1" {
+  description = "dfa"
+  default = "."
+}
+
+variable "memtier_benchmark_cluster2" {
   description = "dfa"
   default = "."
 }
