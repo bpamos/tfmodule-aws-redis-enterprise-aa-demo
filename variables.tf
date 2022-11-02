@@ -389,63 +389,59 @@ variable "license_file" {
     EOF
 }
 
-
-
 #### RE CRDB DB variable inputs
 variable "crdb_db_name" {
-    description = "redis enterprise cluster password"
+    description = "crdb db name"
     default     = "crdb-test1"
 }
 
 variable "crdb_port" {
-    description = "redis enterprise cluster password"
+    description = "crdb port"
     default     = 12000
 }
 
 variable "crdb_memory_size" {
-    description = "redis enterprise cluster password"
+    description = "memory size in bytes"
     default     = 5024000000
 }
 
 variable "crdb_replication" {
-    description = "redis enterprise cluster password"
+    description = "replication yes no"
     default     = "True"
 }
 
 variable "crdb_aof_policy" {
-    description = "redis enterprise cluster password"
+    description = "aof policy"
     default     = "appendfsync-every-sec"
 }
 
 variable "crdb_sharding" {
-    description = "redis enterprise cluster password"
+    description = "sharding yes no"
     default     = "True"
 }
 
 variable "crdb_shards_count" {
-    description = "redis enterprise cluster password"
+    description = "how many master shards"
     default     = 2
 }
 
-
 ##### Memtier Benchmark
-
 variable "memtier_data_load_cluster1" {
-  description = "dfa"
+  description = "data load cmd for cluster 1"
   default = "."
 }
 
 variable "memtier_data_load_cluster2" {
-  description = "dfa"
+  description = "data load cmd for cluster 2"
   default = "."
 }
 
 variable "memtier_benchmark_cluster1" {
-  description = "dfa"
+  description = "benchmark cmd for cluster 1"
   default = "."
 }
 
 variable "memtier_benchmark_cluster2" {
-  description = "dfa"
+  description = "benchmark cmd for cluster 2"
   default = "."
 }
