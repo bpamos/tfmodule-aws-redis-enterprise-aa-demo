@@ -180,18 +180,21 @@ module "memtier_benchmark2" {
   providers = {
       aws = aws.b
     }
-  test-node-count    = var.test-node-count
-  vpc_name           = module.vpc2.vpc-name
-  ssh_key_path       = var.ssh_key_path2
-  crdb_port          = var.crdb_port
-  ### vars pulled from previous modules
-  crdb_endpoint_cluster  = module.create-crdbs.crdb_endpoint_cluster2
-  #crdb_endpoint_cluster2  = module.create-crdbs.crdb_endpoint_cluster2
+  test-node-count           = var.test-node-count
+  vpc_name                  = module.vpc2.vpc-name
+  ssh_key_path              = var.ssh_key_path2
+  crdb_port                 = var.crdb_port
+  crdb_endpoint_cluster     = module.create-crdbs.crdb_endpoint_cluster2
   memtier_data_load_cluster = var.memtier_data_load_cluster2
+  memtier_benchmark_cmd     = var.memtier_benchmark_cluster2
   
-  depends_on           = [module.vpc1, 
-                          module.nodes1, 
-                          module.dns1, 
+  depends_on           = [module.vpc1,
+                          module.vpc2,
+                          module.nodes1,
+                          module.nodes2, 
+                          module.dns1,
+                          module.dns2,
                           module.create-cluster1, 
-                          module.create-cluster2]
+                          module.create-cluster2,
+                          module.create-crdbs]
 }
