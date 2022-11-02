@@ -2,7 +2,7 @@
 
 resource "local_file" "license_file" {
     content  = templatefile("${path.module}/licenses/license.tpl", {
-      license_file        = file("./re-license.txt")
+      license_file        = file("./re-license/re-license.txt")
     })
     filename = "${path.module}/licenses/license"
 }

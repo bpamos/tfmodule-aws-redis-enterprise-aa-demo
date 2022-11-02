@@ -1,5 +1,0 @@
----
-- name: 'Creating Databases...'
-  loop: "{{ re_crdbs }}"
-  include_role:
-    name: create_crdb
