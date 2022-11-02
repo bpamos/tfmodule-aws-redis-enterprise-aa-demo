@@ -1,8 +1,9 @@
-#### Generate ansible inventory file & extra_vars file, run ansible playbook to create cluster
+#### Generate ansible playbook for memtier from template file, 
+#### run memtier data load and benchmark commands from tester node
 
 #### Sleeper, just to make sure nodes module is complete and everything is installed
-resource "time_sleep" "wait_10_seconds" {
-  create_duration = "10s"
+resource "time_sleep" "wait_60_seconds" {
+  create_duration = "60s"
 }
 
 ##### Generate extra_vars.yaml file
@@ -25,7 +26,7 @@ resource "null_resource" "ansible-run" {
     }
 
     depends_on = [
-      time_sleep.wait_10_seconds,
+      time_sleep.wait_60_seconds,
       local_file.memtier-benchmark
     ]
 }
