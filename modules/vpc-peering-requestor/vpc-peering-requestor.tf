@@ -1,4 +1,8 @@
+#### VPC peer requestor, requires getting aws account id from provider of requester
+#### uses the peer and requestor VPC ID and creates request, that will be used in accepter.
+### using cluster 1 as the requester (ie. cluster 1)
 
+# get the aws account id for the provider
 data "aws_caller_identity" "current1" {}
 
 output "account_id" {
@@ -14,8 +18,8 @@ resource "aws_vpc_peering_connection" "peer" {
   auto_accept   = false
 
   tags = {
-    Side = "Requester"
-    Name = format("vpc-peer-%s-and-%s", var.vpc_name1, var.vpc_name2),
+    Side  = "Requester"
+    Name  = format("vpc-peer-%s-and-%s", var.vpc_name1, var.vpc_name2),
     Owner = var.owner
   }
 }
