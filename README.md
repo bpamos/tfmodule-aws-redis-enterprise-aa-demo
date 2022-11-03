@@ -125,6 +125,13 @@ There are a few important files to understand. `modules-cluster1.tf`, `modules-c
     - An example of a terraform variable managment file. The variables in this file are utilized as inputs into the module file. You can choose to use these or hardcode your own inputs in the modules file.
     - to use this file you need to change it from `terraform.tfvars.example` to simply `terraform.tfvars` then enter in your own inputs.
 
+* `re-license.txt.example`:
+    - An example of a Redis Enterprise License file located in the `re-license` folder. You will need to change this to an existing license file.
+    - to use this file you need to change it from `re-license.txt.example` to simply `re-license.txt` then enter in your own license file.
+     - Free Trial License found here ([link](https://redis.com/redis-enterprise-software/pricing/))
+
+***************
+
 ### Instructions for Use:
 1. Open repo in VS code
 2. Copy the variables template. or rename it `terraform.tfvars`
@@ -135,7 +142,7 @@ There are a few important files to understand. `modules-cluster1.tf`, `modules-c
     - Some require user input, some will will use a default value if none is given
 4. Input Redis Enterprise License file in the `re-license` folder
     - change the `re-license.txt.example` to simply `re-license.txt` then enter in your license file.
-    - Free Trial License found here ([link] (https://redis.com/redis-enterprise-software/pricing/))
+    - Free Trial License found here ([link](https://redis.com/redis-enterprise-software/pricing/))
 
 5. Now you are ready to go!
     * Open a terminal in VS Code:
