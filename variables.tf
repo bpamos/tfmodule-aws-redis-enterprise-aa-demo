@@ -35,12 +35,12 @@ variable "owner" {
 
 #### VPC
 variable "base_name1" {
-    description = "base name for resources"
+    description = "base name for resources (prefix name)"
     default = "redisuser1-tf"
 }
 
 variable "base_name2" {
-    description = "base name for resources"
+    description = "base name for resources (prefix name)"
     default = "redisuser2-tf"
 }
 
@@ -344,25 +344,25 @@ variable "external-rules" {
 ####### Create Cluster Variables
 ####### Node and DNS outputs used to Create Cluster
 variable "dns_fqdn" {
-    description = "."
+    description = "dns fqdn (cluster name)"
     default = ""
 }
 
 variable "re-node-internal-ips" {
     type = list
-    description = "."
+    description = "re node internal ips"
     default = []
 }
 
 variable "re-node-eip-ips" {
     type = list
-    description = "."
+    description = "re node eip ips"
     default = []
 }
 
 variable "re-data-node-eip-public-dns" {
     type = list
-    description = "."
+    description = "re node eip public dns"
     default = []
 }
 
