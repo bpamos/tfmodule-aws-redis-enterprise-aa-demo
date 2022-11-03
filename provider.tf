@@ -8,7 +8,8 @@ terraform {
   }
 }
 
-#### AWS region and AWS key pair
+#### AWS region and AWS key pair for region A
+#### Cluster A will live in region A and use this provider
 provider "aws" {
   alias      = "a"
   region     = var.region1
@@ -16,6 +17,8 @@ provider "aws" {
   secret_key = var.aws_creds[1]
 }
 
+#### AWS region and AWS key pair for region B
+#### Cluster B will live in region B and use this provider
 provider "aws" {
   alias      = "b"
   region     = var.region2
