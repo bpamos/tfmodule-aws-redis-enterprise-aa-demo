@@ -23,7 +23,7 @@ Then run memtier benchmark load test from tester nodes into each cluster.
 * aws access key and secret key
 * an **AWS generated** SSH key for the region you are creating the cluster
     - *you must chmod 400 the key before use*
-* Redis Enterprise License File input in the "re-license" file
+* Redis Enterprise License File input in the `re-license` file
     - Free Trial License found here ([link](https://redis.com/redis-enterprise-software/pricing/))
 
 ### Prerequisites
@@ -32,7 +32,7 @@ Then run memtier benchmark load test from tester nodes into each cluster.
 * ansible installed on local machine
 * VS Code
 * install requirements.txt file
-    - pip3 install -r requirements.txt
+    - `pip3 install -r requirements.txt`
 
 #### Prerequisites (detailed instructions)
 1.  Install `aws-cli` on your local machine and run `aws configure` ([link](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)) to set your access and secret key.
