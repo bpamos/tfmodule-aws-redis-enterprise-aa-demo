@@ -1,4 +1,5 @@
 #### Generate ansible inventory file & extra_vars file, run ansible playbook to create cluster
+#### run ansible to create cluster from nodes with RE software installed on them
 
 #### Sleeper, just to make sure nodes module is complete and everything is installed
 resource "time_sleep" "wait_30_seconds" {

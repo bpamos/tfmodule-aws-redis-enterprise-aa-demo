@@ -1,13 +1,17 @@
 #### Outputs
 
-# output "re-cluster-url" {
-#   value = format("https://%s:8443", var.dns_fqdn)
-# }
+output "crdb_endpoint_cluster1" {
+  value = format("redis-%s.%s", var.crdb_port,var.dns_fqdn1)
+}
 
-# output "re-cluster-username" {
-#   value = var.re_cluster_username
-# }
+output "crdb_endpoint_cluster2" {
+  value = format("redis-%s.%s", var.crdb_port,var.dns_fqdn2)
+}
 
-# output "re-cluster-password" {
-#   value = var.re_cluster_password
-# }
+output "crdb_cluster1_redis_cli_cmd" {
+  value = format("redis-cli -h redis-%s.%s -p %s", var.crdb_port,var.dns_fqdn1,var.crdb_port)
+}
+
+output "crdb_cluster2_redis_cli_cmd" {
+  value = format("redis-cli -h redis-%s.%s -p %s", var.crdb_port,var.dns_fqdn2,var.crdb_port)
+}

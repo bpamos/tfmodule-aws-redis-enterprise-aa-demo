@@ -35,24 +35,35 @@ variable "owner" {
 
 #### VPC
 variable "base_name1" {
-    description = "base name for resources"
+    description = "base name for resources (prefix name)"
     default = "redisuser1-tf"
 }
 
 variable "base_name2" {
-    description = "base name for resources"
+    description = "base name for resources (prefix name)"
     default = "redisuser2-tf"
 }
 
-variable "vpc_cidr" {
-    description = "vpc-cidr"
+variable "vpc_cidr1" {
+    description = "vpc-cidr1"
     default = "10.0.0.0/16"
 }
 
-variable "subnet_cidr_blocks" {
+variable "vpc_cidr2" {
+    description = "vpc-cidr2"
+    default = "10.1.0.0/16"
+}
+
+variable "subnet_cidr_blocks1" {
     type = list(any)
-    description = "subnet_cidr_block"
+    description = "subnet_cidr_block1"
     default = ["10.0.1.0/24","10.0.2.0/24","10.0.3.0/24"]
+}
+
+variable "subnet_cidr_blocks2" {
+    type = list(any)
+    description = "subnet_cidr_block2"
+    default = ["10.1.1.0/24","10.1.2.0/24","10.1.3.0/24"]
 }
 
 variable "subnet_azs1" {
@@ -333,25 +344,25 @@ variable "external-rules" {
 ####### Create Cluster Variables
 ####### Node and DNS outputs used to Create Cluster
 variable "dns_fqdn" {
-    description = "."
+    description = "dns fqdn (cluster name)"
     default = ""
 }
 
 variable "re-node-internal-ips" {
     type = list
-    description = "."
+    description = "re node internal ips"
     default = []
 }
 
 variable "re-node-eip-ips" {
     type = list
-    description = "."
+    description = "re node eip ips"
     default = []
 }
 
 variable "re-data-node-eip-public-dns" {
     type = list
-    description = "."
+    description = "re node eip public dns"
     default = []
 }
 
@@ -376,4 +387,61 @@ variable "license_file" {
     default     = <<EOF
     paste license file here
     EOF
+}
+
+#### RE CRDB DB variable inputs
+variable "crdb_db_name" {
+    description = "crdb db name"
+    default     = "crdb-test1"
+}
+
+variable "crdb_port" {
+    description = "crdb port"
+    default     = 12000
+}
+
+variable "crdb_memory_size" {
+    description = "memory size in bytes"
+    default     = 5024000000
+}
+
+variable "crdb_replication" {
+    description = "replication yes no"
+    default     = "True"
+}
+
+variable "crdb_aof_policy" {
+    description = "aof policy"
+    default     = "appendfsync-every-sec"
+}
+
+variable "crdb_sharding" {
+    description = "sharding yes no"
+    default     = "True"
+}
+
+variable "crdb_shards_count" {
+    description = "how many master shards"
+    default     = 2
+}
+
+##### Memtier Benchmark
+variable "memtier_data_load_cluster1" {
+  description = "data load cmd for cluster 1"
+  default = "."
+}
+
+variable "memtier_data_load_cluster2" {
+  description = "data load cmd for cluster 2"
+  default = "."
+}
+
+variable "memtier_benchmark_cluster1" {
+  description = "benchmark cmd for cluster 1"
+  default = "."
+}
+
+variable "memtier_benchmark_cluster2" {
+  description = "benchmark cmd for cluster 2"
+  default = "."
 }

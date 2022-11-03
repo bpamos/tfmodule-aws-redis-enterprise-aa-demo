@@ -1,5 +1,5 @@
-
-
+##### Create CRDB database from cluster 1 with participating cluster (cluster 2)
+##### use crdb input values to define the params of the crdb. 
 
 
 ##### Generate ansible inventory.ini for any number of nodes
@@ -25,14 +25,19 @@ resource "local_file" "crdb_tpl" {
     filename = "${path.module}/crdbs/crdb.py"
 }
 
+#### Sleeper, just to make sure nodes module is complete and everything is installed
+resource "time_sleep" "wait_30_seconds_crdb" {
+  create_duration = "30s"
+}
 
-#Run ansible-playbook to create crdb
+#Run ansible-playbook to create crdb from python script (REST API)
 resource "null_resource" "ansible_create_crdb_restapi" {
   provisioner "local-exec" {
     command = "python3 ${path.module}/crdbs/crdb.py"
     }
 
     depends_on = [
-      local_file.crdb_tpl
+      local_file.crdb_tpl,
+      time_sleep.wait_30_seconds_crdb
     ]
 }
