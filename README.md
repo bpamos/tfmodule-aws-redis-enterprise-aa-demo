@@ -24,7 +24,7 @@ Then run memtier benchmark load test from tester nodes into each cluster.
 * an **AWS generated** SSH key for the region you are creating the cluster
     - *you must chmod 400 the key before use*
 * Redis Enterprise License File input in the "re-license" file
-    - Free Trial License found here ([link] (https://redis.com/redis-enterprise-software/pricing/))
+    - Free Trial License found here ([link](https://redis.com/redis-enterprise-software/pricing/))
 
 ### Prerequisites
 * aws-cli (aws access key and secret key)
