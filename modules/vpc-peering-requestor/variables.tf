@@ -12,10 +12,6 @@ variable "vpc_name2" {
     description = "vpc name 2"
 }
 
-# variable "main_region" {
-#     description = "AWS region"
-# }
-
 variable "peer_region" {
     description = "AWS region"
 }

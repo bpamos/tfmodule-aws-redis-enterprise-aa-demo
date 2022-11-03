@@ -17,15 +17,15 @@ variable "crdb_port" {
 }
 
 variable "crdb_endpoint_cluster" {
-  description = "dfa"
+  description = "crdb endpoint"
 }
 
 variable "memtier_data_load_cluster" {
-  description = "dfa"
+  description = "data load for cluster"
   default = "."
 }
 
 variable "memtier_benchmark_cmd" {
-  description = "dfa"
+  description = "benchmark cmd for cluster"
   default = "."
 }

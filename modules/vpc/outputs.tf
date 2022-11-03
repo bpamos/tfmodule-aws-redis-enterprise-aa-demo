@@ -11,7 +11,6 @@ output "subnet-azs" {
   value = var.subnet_azs
 }
 
-
 output "subnet-ids" {
   value = [aws_subnet.re_subnet1.id,
            aws_subnet.re_subnet2.id,
