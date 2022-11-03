@@ -1,10 +1,15 @@
-########## Create an RE cluster on AWS from scratch #####
+########## Active Active Db Redis Enterprise Clusters between 2 regions (Cluster 1) #####
 #### Modules to create the following:
-#### Brand new VPC 
-#### RE nodes and install RE software (ubuntu)
-#### Test node with Redis and Memtier
-#### DNS (NS and A records for RE nodes)
-#### Create and Join RE cluster 
+#### Brand new VPC in region A
+#### VPC peering requestor from region A to VPC in region B
+#### VPC peering acceptor from region B to region A
+#### Route table VPC peering id association for VPC A
+#### Cluster A, RE nodes and install RE software (ubuntu)
+#### VPC A, Test node with Redis and Memtier
+#### Cluster A, DNS (NS and A records for RE nodes)
+#### Cluster A, Create and Join RE cluster
+#### Create CRDB DB between Cluster A & Cluster B
+#### Run Memtier benchmark data load and benchmark cmd from tester node in VPC A to Cluster A
 
 
 ########### VPC Module
@@ -47,14 +52,17 @@ output "route-table-id1" {
 }
 
 ######
-### VPC PEERING
+#### VPC Peering Modules
+#### VPC peering is broken into 2 modules because you need to 
+#### request from region A (provider A), and accept from region B (provider B)
+#### Final step is to do a route table association to the VPC peering ID
 
+#### VPC peering requestor from region A (VPC A) to region B (VPC B)
 module "vpc-peering-requestor" {
     source             = "./modules/vpc-peering-requestor"
     providers = {
       aws = aws.a
     }
-    main_region        = var.region1
     peer_region        = var.region2
     main_vpc_id        = module.vpc1.vpc-id
     peer_vpc_id        = module.vpc2.vpc-id
@@ -67,31 +75,26 @@ module "vpc-peering-requestor" {
     ]
 }
 
+#### output the vpc peering ID to use in acceptor module
 output "vpc_peering_connection_id" {
-  description = "get the VPC Name tag"
+  description = "VPC peering connection ID"
   value = module.vpc-peering-requestor.vpc_peering_connection_id
 }
 
+#### VPC peering acceptor, accept from region B (VPC B) to region A (VPC A)
 module "vpc-peering-acceptor" {
     source             = "./modules/vpc-peering-acceptor"
     providers = {
       aws = aws.b
     }
-    #aws_creds          = var.aws_creds
-    main_region        = var.region1
-    peer_region        = var.region2
-    main_vpc_id        = module.vpc1.vpc-id
-    peer_vpc_id        = module.vpc2.vpc-id
     vpc_peering_connection_id = module.vpc-peering-requestor.vpc_peering_connection_id
-    #vpc_name1          = module.vpc1.vpc-name
-    #vpc_name2          = module.vpc2.vpc-name
-    #owner              = var.owner
 
     depends_on = [
       module.vpc1, module.vpc2, module.vpc-peering-requestor
     ]
 }
 
+#### Route table association in reigon A (VPC A) for vpc peering id to VPC CIDR in Region B
 module "vpc-peering-routetable1" {
     source             = "./modules/vpc-peering-routetable"
     providers = {
@@ -109,7 +112,6 @@ module "vpc-peering-routetable1" {
       module.vpc-peering-acceptor
     ]
 }
-
 
 ########### Node Module
 #### Create RE and Test nodes
@@ -157,10 +159,6 @@ output "re-data-node-eip-public-dns1" {
   value = module.nodes1.re-data-node-eip-public-dns
 }
 
-# output "test-node-eips" {
-#   value = module.nodes.test-node-eips
-# }
-
 ########### DNS Module
 #### Create DNS (NS record, A records for each RE node and its eip)
 #### Currently using existing dns hosted zone
@@ -182,7 +180,7 @@ output "dns-ns-record-name1" {
 }
 
 ############## RE Cluster
-#### Ansible Playbook runs locally to create the cluster
+#### Ansible Playbook runs locally to create the cluster A
 module "create-cluster1" {
   source               = "./modules/re-cluster"
   providers = {
@@ -216,17 +214,17 @@ output "re-cluster-password" {
 }
 
 ############## RE Cluster CRDB databases
-#### Ansible Playbook runs locally to create the CRDB db
+#### Ansible Playbook runs locally to create the CRDB db between cluster A and B
 module "create-crdbs" {
   source               = "./modules/re-crdb"
   providers = {
       aws = aws.a
     }
-
   re_cluster_username  = var.re_cluster_username
   re_cluster_password  = var.re_cluster_password
   dns_fqdn1            = module.dns1.dns-ns-record-name
   dns_fqdn2            = module.dns2.dns-ns-record-name #getting cluster2 name from other module
+  #### crdb db inputs
   crdb_db_name         = var.crdb_db_name
   crdb_port            = var.crdb_port
   crdb_memory_size     = var.crdb_memory_size
@@ -246,7 +244,6 @@ module "create-crdbs" {
 }
 
 #### CRDB Outputs
-
 output "crdb_endpoint_cluster1" {
   value = module.create-crdbs.crdb_endpoint_cluster1
 }
@@ -264,7 +261,7 @@ output "crdb_cluster2_redis_cli_cmd" {
 }
 
 ############## RE Cluster CRDB databases memtier benchmark
-#### Ansible Playbook runs locally to run the memtier benchmark cmds
+#### Ansible Playbook runs locally to run the memtier benchmark cmds for cluster A
 module "memtier_benchmark1" {
   source               = "./modules/re-crdb-memtier"
   providers = {
@@ -275,6 +272,7 @@ module "memtier_benchmark1" {
   ssh_key_path              = var.ssh_key_path1
   crdb_port                 = var.crdb_port
   crdb_endpoint_cluster     = module.create-crdbs.crdb_endpoint_cluster1
+  #### memtier inputs (no need to include db endpoint, its auto added)
   memtier_data_load_cluster = var.memtier_data_load_cluster1
   memtier_benchmark_cmd     = var.memtier_benchmark_cluster1
   

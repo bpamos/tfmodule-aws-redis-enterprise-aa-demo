@@ -1,10 +1,12 @@
-########## Create an RE cluster on AWS from scratch #####
+########## Active Active Db Redis Enterprise Clusters between 2 regions (Cluster 2) #####
 #### Modules to create the following:
-#### Brand new VPC 
-#### RE nodes and install RE software (ubuntu)
-#### Test node with Redis and Memtier
-#### DNS (NS and A records for RE nodes)
-#### Create and Join RE cluster 
+#### Brand new VPC in region B
+#### Route table VPC peering id association for VPC B
+#### Cluster B, RE nodes and install RE software (ubuntu)
+#### VPC B, Test node with Redis and Memtier
+#### Cluster B, DNS (NS and A records for RE nodes)
+#### Cluster B, Create and Join RE cluster
+#### Run Memtier benchmark data load and benchmark cmd from tester node in VPC B to Cluster B
 
 
 ########### VPC Module
@@ -46,17 +48,15 @@ output "route-table-id2" {
   value = module.vpc2.route-table-id
 }
 
+#### Route table association in reigon B (VPC B) for vpc peering id to VPC CIDR in Region A
 module "vpc-peering-routetable2" {
     source             = "./modules/vpc-peering-routetable"
     providers = {
       aws = aws.b
     }
- 
-    #main_vpc_id               = module.vpc1.vpc-id
     peer_vpc_id               = module.vpc2.vpc-id
     main_vpc_route_table_id   = module.vpc2.route-table-id
     vpc_peering_connection_id = module.vpc-peering-requestor.vpc_peering_connection_id
-    # main_vpc_cidr      = var.vpc_cidr1
     peer_vpc_cidr             = var.vpc_cidr1
 
     depends_on = [
@@ -66,7 +66,6 @@ module "vpc-peering-routetable2" {
       module.vpc-peering-acceptor
     ]
 }
-
 
 ########### Node Module
 #### Create RE and Test nodes
@@ -114,10 +113,6 @@ output "re-data-node-eip-public-dns2" {
   value = module.nodes2.re-data-node-eip-public-dns
 }
 
-# output "test-node-eips" {
-#   value = module.nodes.test-node-eips
-# }
-
 ########### DNS Module
 #### Create DNS (NS record, A records for each RE node and its eip)
 #### Currently using existing dns hosted zone
@@ -139,7 +134,7 @@ output "dns-ns-record-name2" {
 }
 
 ############## RE Cluster
-#### Ansible Playbook runs locally to create the cluster
+#### Ansible Playbook runs locally to create the cluster B
 module "create-cluster2" {
   source               = "./modules/re-cluster"
   providers = {
@@ -172,9 +167,8 @@ output "re-cluster-password2" {
   value = module.create-cluster2.re-cluster-password
 }
 
-
 ############## RE Cluster CRDB databases memtier benchmark
-#### Ansible Playbook runs locally to run the memtier benchmark cmds
+#### Ansible Playbook runs locally to run the memtier benchmark cmds for cluster A
 module "memtier_benchmark2" {
   source               = "./modules/re-crdb-memtier"
   providers = {
@@ -185,6 +179,7 @@ module "memtier_benchmark2" {
   ssh_key_path              = var.ssh_key_path2
   crdb_port                 = var.crdb_port
   crdb_endpoint_cluster     = module.create-crdbs.crdb_endpoint_cluster2
+  #### memtier inputs (no need to include db endpoint, its auto added)
   memtier_data_load_cluster = var.memtier_data_load_cluster2
   memtier_benchmark_cmd     = var.memtier_benchmark_cluster2
   
