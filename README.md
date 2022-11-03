@@ -1,19 +1,21 @@
 # tfmodule-aws-redis-enterprise-aa-demo
-demo of Active-Active Redis Enterprise DB
-
-python3 -m venv ./venv
-
-pip3 install -r requirements.txt
-
+Deploy an Active-Active CRDB database between two Redis Enterprise Clusters in different regions. 
+Then run memtier benchmark load test from tester nodes into each cluster.
+(*If you do not want to run load test comment out `re-crdb-memtier` module*)
 
 *********
 
 ## Terraform Modules to provision the following:
-* New VPC 
+* Two new VPCs in region A & B
+* VPC peering between the two VPCs
+* Route table association for VPC peer ID on both VPCs 
 * Any number of Redis Enterprise nodes and install Redis Enterprise software (ubuntu 18.04)
 * Test node with Redis and Memtier installed
 * DNS (NS and A records for Redis Enterprise nodes)
-* Create and Join Redis Enterprise cluster 
+* Create and Join Redis Enterprise cluster
+* Redis Enterprise License added to cluster (**User input of license file required**)
+* Create CRDB database between Cluster A & Cluster B
+* Run memtier benchmark commands from Tester nodes in each VPC to associated Cluster
 
 ### !!!! Requirements !!!
 * Redis Enterprise Software (**Ubuntu 18.04**)
@@ -21,12 +23,16 @@ pip3 install -r requirements.txt
 * aws access key and secret key
 * an **AWS generated** SSH key for the region you are creating the cluster
     - *you must chmod 400 the key before use*
+* Redis Enterprise License File input in the "re-license" file
+    - Free Trial License found here ([link] (https://redis.com/redis-enterprise-software/pricing/))
 
 ### Prerequisites
 * aws-cli (aws access key and secret key)
 * terraform installed on local machine
 * ansible installed on local machine
 * VS Code
+* install requirements.txt file
+    - pip3 install -r requirements.txt
 
 #### Prerequisites (detailed instructions)
 1.  Install `aws-cli` on your local machine and run `aws configure` ([link](https://docs.aws.amazon.com/cli/latest/userguide/cli-chap-install.html)) to set your access and secret key.
@@ -55,22 +61,40 @@ pip3 install -r requirements.txt
     # example: export PATH=$PATH:/Users/username/Library/Python/3.8/bin
     # (*make sure you choose the correct python version you are using*)
     # you can check if its in the path of your directory by typing "ansible-playbook" and seeing if the command exists
+
+    # To run crdb python script and ansible please install requirements.txt file
+    pip3 install -r requirements.txt
     ```
 
 * (*for more information on how to install ansible to your local machine:*) ([link](https://docs.ansible.com/ansible/latest/installation_guide/intro_installation.html))
 
 ## Getting Started:
-Now that you have terraform and ansible installed you can get started provisioning your RE cluster on AWS using terraform modules.
+Now that you have terraform and ansible installed you can get started provisioning your RE clusters on AWS using terraform modules.
 
 Since creating a Redis Enterprise cluster from scratch takes many components (VPC, DNS, Nodes, and creating the cluster via REST API) it is best to break these up into invidivual `terraform modules`. That way if a user already has a pre-existing VPC, they can utilize their existing VPC instead of creating a brand new one.
 
-There are two important files to understand. `modules.tf` and `terraform.tfvars.example`.
-* `modules.tf` contains the following: 
-    - `vpc module` (creates new VPC)
+There are a few important files to understand. `modules-cluster1.tf`, `modules-cluster2.tf`  and `terraform.tfvars.example`.
+* `modules-cluster1.tf` contains the following: 
+    - `vpc module` (creates new VPC1)
+    - `vpc-peering-requestor module` (initiates vpc request from vpc1 to vpc2)
+    - `vpc-peering-acceptor module` (accepts vpc request from vpc2 to vpc1)
+    - `vpc-peering-routetable module` (associates vpc2 CIDR to vpc1 for vpc-peering-id)
     - `node module` (creates and provisions ubuntu 18.04 vms with RE software installed or test vms with Redis and Memtier installed)
     - `dns module` (creates R53 DNS with NS record and A records), 
-    - `create-cluster module` (uses ansible to create and join the RE cluster via REST API)
+    - `create-cluster module` (uses ansible to create and join the RE cluster via REST API, and installs RE license file)
+    - `re-crdb module` (creates a crdb in cluster 1, with participating cluster, cluster 2)
+    - `re-crdb-memtier module` (runs memtier benchmark cmds from tester node in vpc 1 to associated cluster 1)
     * *the individual modules can contains inputs from previously generated from run modules.*
+
+* `modules-cluster2.tf` contains the following: 
+    - `vpc module` (creates new VPC2)
+    - `vpc-peering-routetable module` (associates vpc1 CIDR to vpc2 for vpc-peering-id)
+    - `node module` (creates and provisions ubuntu 18.04 vms with RE software installed or test vms with Redis and Memtier installed)
+    - `dns module` (creates R53 DNS with NS record and A records), 
+    - `create-cluster module` (uses ansible to create and join the RE cluster via REST API, and installs RE license file)
+    - `re-crdb-memtier module` (runs memtier benchmark cmds from tester node in vpc 2 to associated cluster 2)
+    * *the individual modules can contains inputs from previously generated from run modules.*
+
     - example:
     ```
     # either use the variables filled in from `.tfvars` as seen below
@@ -109,10 +133,14 @@ There are two important files to understand. `modules.tf` and `terraform.tfvars.
     ```
 3. Update `terraform.tfvars` variable inputs with your own inputs
     - Some require user input, some will will use a default value if none is given
-4. Now you are ready to go!
+4. Input Redis Enterprise License file in the `re-license` folder
+    - change the `re-license.txt.example` to simply `re-license.txt` then enter in your license file.
+    - Free Trial License found here ([link] (https://redis.com/redis-enterprise-software/pricing/))
+
+5. Now you are ready to go!
     * Open a terminal in VS Code:
     ```bash
-    # ensure ansible is in path
+    # ensure ansible is in path (you should see an output showing ansible is there)
     ansible --version
     # run terraform commands
     terraform init
@@ -120,8 +148,9 @@ There are two important files to understand. `modules.tf` and `terraform.tfvars.
     terraform apply
     # Enter a value: yes
     # can take around 10 minutes to provision cluster
+    # then the memtier-benchmark cmds will run.
     ```
-5. After a successful run there should be outputs showing the FQDN of your RE cluster and the username and password. (*you may need to scroll up a little*)
+5. After a successful run there should be outputs showing the FQDNs of your RE clusters and the username and password. (*you may need to scroll up a little*)
  - example output:
  ```
  Outputs:
