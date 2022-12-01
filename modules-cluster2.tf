@@ -92,9 +92,6 @@ module "nodes2" {
     open-nets          = var.open-nets
     ### vars pulled from previous modules
     ## from vpc module outputs 
-    ##(these do not need to be varibles in the variables.tf outside the modules folders
-    ## since they are refrenced from the other module, but they need to be variables 
-    ## in the variables.tf inside the nodes module folder )
     vpc_name           = module.vpc2.vpc-name
     vpc_subnets_ids    = module.vpc2.subnet-ids
     vpc_id             = module.vpc2.vpc-id
