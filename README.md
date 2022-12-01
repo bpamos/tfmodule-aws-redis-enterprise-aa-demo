@@ -5,7 +5,7 @@ Then run memtier benchmark load test from tester nodes into each cluster.
 
 
 * Example of deployment: (user can choose any number of RE nodes and any number of tester nodes to deploy)
-![Alt text](image/TF_AA_DEMO.png?raw=true "Title")
+![Alt text](image/TF_AA_DEMO.png "Title")
 
 *********
 
