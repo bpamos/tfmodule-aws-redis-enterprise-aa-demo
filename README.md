@@ -3,11 +3,15 @@ Deploy an Active-Active CRDB database between two Redis Enterprise Clusters in d
 Then run memtier benchmark load test from tester nodes into each cluster.
 (*If you do not want to run load test comment out `re-crdb-memtier` module*)
 
+
+* Example of deployment: (user can choose any number of RE nodes and any number of tester nodes to deploy)
+![Alt text](image/TF_AA_DEMO.png?raw=true "Title")
+
 *********
 
 ## Terraform Modules to provision the following:
 * Two new VPCs in region A & B
-* VPC peering between the two VPCs
+* VPC peering between the two VPCs (inter-region VPC peering)
 * Route table association for VPC peer ID on both VPCs 
 * Any number of Redis Enterprise nodes and install Redis Enterprise software (ubuntu 18.04)
 * Test node with Redis and Memtier installed
@@ -167,9 +171,18 @@ There are a few important files to understand. `modules-cluster1.tf`, `modules-c
  ```
  Outputs:
 
-re-cluster-url = "https://redis-tf-us-west-2-cluster.mydomain.com:8443"
-re-cluster-username = "admin@admin.com"
+crdb_cluster1_redis_cli_cmd = "redis-cli -h redis-12001.redis1-tf-us-west-2-cluster.redisdemo.com -p 12001"
+crdb_cluster2_redis_cli_cmd = "redis-cli -h redis-12001.redis2-tf-us-east-1-cluster.redisdemo.com -p 12001"
+crdb_endpoint_cluster1 = "redis-12001.redis1-tf-us-west-2-cluster.redisdemo.com"
+crdb_endpoint_cluster2 = "redis-12001.redis2-tf-us-east-1-cluster.redisdemo.com"
+dns-ns-record-name1 = "redis1-tf-us-west-2-cluster.redisdemo.com"
+dns-ns-record-name2 = "redis2-tf-us-east-1-cluster.redisdemo.com"
 re-cluster-password = "admin"
+re-cluster-password2 = "admin"
+re-cluster-url = "https://redis1-tf-us-west-2-cluster.redisdemo.com:8443"
+re-cluster-url2 = "https://redis2-tf-us-east-1-cluster.redisdemo.com:8443"
+re-cluster-username = "admin@admin.com"
+re-cluster-username2 = "admin@admin.com"
  ```
 
 ## Cleanup
