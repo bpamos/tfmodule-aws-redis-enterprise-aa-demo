@@ -1,7 +1,8 @@
 # tfmodule-aws-redis-enterprise-aa-demo
-Deploy an Active-Active CRDB database between two Redis Enterprise Clusters in different regions. 
+Deploy an Active-Active CRDB database between two Redis Enterprise Clusters in different regions.
+
 Then run memtier benchmark load test from tester nodes into each cluster.
-(*If you do not want to run load test comment out `re-crdb-memtier` module*)
+* (*If you do not want to run load test comment out `re-crdb-memtier` module*)
 
 
 * Example of deployment: (user can choose any number of RE nodes and any number of tester nodes to deploy)
@@ -10,7 +11,7 @@ Then run memtier benchmark load test from tester nodes into each cluster.
 *********
 
 ## Terraform Modules to provision the following:
-* Two new VPCs in region A & B
+* Two new VPCs (VPC in region A & and VPC in region B)
 * VPC peering between the two VPCs (inter-region VPC peering)
 * Route table association for VPC peer ID on both VPCs 
 * Any number of Redis Enterprise nodes and install Redis Enterprise software (ubuntu 18.04)
@@ -27,7 +28,7 @@ Then run memtier benchmark load test from tester nodes into each cluster.
 * aws access key and secret key
 * an **AWS generated** SSH key for the region you are creating the cluster
     - *you must chmod 400 the key before use*
-* Redis Enterprise License File input in the `re-license` file
+* Redis Enterprise License File input in the `re-license` folder
     - Free Trial License found here ([link](https://redis.com/redis-enterprise-software/pricing/))
 
 ### Prerequisites
@@ -35,7 +36,7 @@ Then run memtier benchmark load test from tester nodes into each cluster.
 * terraform installed on local machine
 * ansible installed on local machine
 * VS Code
-* install requirements.txt file
+* install `requirements.txt` file
     - `pip3 install -r requirements.txt`
 
 #### Prerequisites (detailed instructions)
@@ -99,7 +100,8 @@ There are a few important files to understand. `modules-cluster1.tf`, `modules-c
     - `re-crdb-memtier module` (runs memtier benchmark cmds from tester node in vpc 2 to associated cluster 2)
     * *the individual modules can contains inputs from previously generated from run modules.*
 
-    - example:
+
+* **example:**
     ```
     # either use the variables filled in from `.tfvars` as seen below
     module "vpc" {
@@ -166,7 +168,9 @@ There are a few important files to understand. `modules-cluster1.tf`, `modules-c
     # can take around 10 minutes to provision cluster
     # then the memtier-benchmark cmds will run.
     ```
-5. After a successful run there should be outputs showing the FQDNs of your RE clusters and the username and password. (*you may need to scroll up a little*)
+* **(The memtier-benchmark cmds will run pior to terraform displaying the outputs... The outputs give the cluster urls, so if you want to see the benchmark cmds running in the cluster you will need to know the cluster urls prior to terraform completing and showing the outputs)**
+
+6. After a successful run there should be outputs showing the FQDNs of your RE clusters and the username and password. (*you may need to scroll up a little*)
  - example output:
  ```
  Outputs:
