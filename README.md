@@ -168,7 +168,7 @@ There are a few important files to understand. `modules-cluster1.tf`, `modules-c
     # can take around 10 minutes to provision cluster
     # then the memtier-benchmark cmds will run.
     ```
-* **(The memtier-benchmark cmds will run pior to terraform displaying the outputs... The outputs give the cluster urls, so if you want to see the benchmark cmds running in the cluster you will need to know the cluster urls prior to terraform completing and showing the outputs)**
+* ***(The memtier-benchmark cmds will run pior to terraform displaying the outputs... The outputs give the cluster FQDNs, so if you want to see the benchmark cmds running in the cluster you will need to know the cluster FQDNs prior to terraform completing and showing the outputs)***
 
 6. After a successful run there should be outputs showing the FQDNs of your RE clusters and the username and password. (*you may need to scroll up a little*)
  - example output:
