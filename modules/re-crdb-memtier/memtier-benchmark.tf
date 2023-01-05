@@ -18,15 +18,15 @@ resource "local_file" "memtier-benchmark" {
 }
 
 ######################
-# Run ansible-playbook to create cluster
-resource "null_resource" "ansible-run" {
-  count = var.test-node-count
-  provisioner "local-exec" {
-    command = "ansible-playbook ${path.module}/ansible/${var.vpc_name}_memtier_playbook.yaml --private-key ${var.ssh_key_path} -i /tmp/${var.vpc_name}_test_node_${count.index}.ini"
-    }
+# # Run ansible-playbook to create cluster
+# resource "null_resource" "ansible-run" {
+#   count = var.test-node-count
+#   provisioner "local-exec" {
+#     command = "ansible-playbook ${path.module}/ansible/${var.vpc_name}_memtier_playbook.yaml --private-key ${var.ssh_key_path} -i /tmp/${var.vpc_name}_test_node_${count.index}.ini"
+#     }
 
-    depends_on = [
-      time_sleep.wait_60_seconds,
-      local_file.memtier-benchmark
-    ]
-}
+#     depends_on = [
+#       time_sleep.wait_60_seconds,
+#       local_file.memtier-benchmark
+#     ]
+# }
