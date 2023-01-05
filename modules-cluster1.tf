@@ -283,3 +283,17 @@ module "memtier_benchmark1" {
                           module.create-cluster2,
                           module.create-crdbs]
 }
+
+### outputs
+
+output "crdb_cluster1_memtier-data-load-cmd" {
+  value = module.memtier_benchmark1.memtier-data-load-cmd
+}
+
+output "crdb_cluster1_memtier-benchmark-cmd" {
+  value = module.memtier_benchmark1.memtier-benchmark-cmd
+}
+
+output "crdb_cluster1_memtier-ansible-playbook-cmd" {
+  value = module.memtier_benchmark1.memtier-ansible-playbook-cmd
+}
