@@ -166,16 +166,22 @@ There are a few important files to understand. `modules-cluster1.tf`, `modules-c
     terraform apply
     # Enter a value: yes
     # can take around 10 minutes to provision cluster
-    # then the memtier-benchmark cmds will run.
+    # then will print outputs of cluster FQDN and Ansible cmds
+    # for running the memtier data loading & benchmark cmds per cluster
     ```
-* ***(The memtier-benchmark cmds will run pior to terraform displaying the final outputs shown in step 6... The outputs display the cluster FQDNs for easy access into the cluster, so if you want to see the benchmark cmds running in the cluster you will need to know the cluster FQDNs prior to terraform completing and displaying the outputs)***
 
-6. After a successful run there should be outputs showing the FQDNs of your RE clusters and the username and password. (*you may need to scroll up a little*)
+6. After a successful run there should be outputs showing the FQDNs of your RE clusters and the username and password. It will also have outputs for ansible cmds that you can run in the terminal to run the memtier data load & benchmark cmd per cluster (*you may need to scroll up a little*)
  - example output:
- ```
- Outputs:
+```
+outputs:
 
+crdb_cluster1_memtier-ansible-playbook-cmd = "ansible-playbook modules/re-crdb-memtier/ansible//redis1-tf-us-west-2-cluster_memtier_playbook.yaml --private-key ~/desktop/keys/key-west2-ssh-aws.pem -i /tmp/redis1-tf-us-west-2-cluster_test_node_0.ini"
+crdb_cluster1_memtier-benchmark-cmd = "memtier_benchmark -x 1 --ratio=1:1 --test-time=300 -d 500 -t 10 -c 10 --pipeline=10 --key-pattern=S:S --key-prefix='1clusterA' -s redis-12001.redis1-tf-us-west-2-cluster.redisdemo.com -p 12001"
+crdb_cluster1_memtier-data-load-cmd = "memtier_benchmark -t 4 -c 1 --pipeline 30 -d 300 --key-maximum=2500000 --key-prefix='1clusterA' --key-pattern=P:P -n allkeys -s redis-12001.redis1-tf-us-west-2-cluster.redisdemo.com -p 12001"
 crdb_cluster1_redis_cli_cmd = "redis-cli -h redis-12001.redis1-tf-us-west-2-cluster.redisdemo.com -p 12001"
+crdb_cluster2_memtier-ansible-playbook-cmd = "ansible-playbook modules/re-crdb-memtier/ansible//redis2-tf-us-east-1-cluster_memtier_playbook.yaml --private-key ~/desktop/keys/key-east1-ssh-aws.pem -i /tmp/redis2-tf-us-east-1-cluster_test_node_0.ini"
+crdb_cluster2_memtier-benchmark-cmd = "memtier_benchmark -x 1 --ratio=1:1 --test-time=300 -d 500 -t 10 -c 10 --pipeline=10 --key-pattern=S:S --key-prefix='2clusterB' -s redis-12001.redis2-tf-us-east-1-cluster.redisdemo.com -p 12001"
+crdb_cluster2_memtier-data-load-cmd = "memtier_benchmark -t 4 -c 1 --pipeline 30 -d 300 --key-maximum=2500000 --key-prefix='2clusterB' --key-pattern=P:P -n allkeys -s redis-12001.redis2-tf-us-east-1-cluster.redisdemo.com -p 12001"
 crdb_cluster2_redis_cli_cmd = "redis-cli -h redis-12001.redis2-tf-us-east-1-cluster.redisdemo.com -p 12001"
 crdb_endpoint_cluster1 = "redis-12001.redis1-tf-us-west-2-cluster.redisdemo.com"
 crdb_endpoint_cluster2 = "redis-12001.redis2-tf-us-east-1-cluster.redisdemo.com"
@@ -187,7 +193,17 @@ re-cluster-url = "https://redis1-tf-us-west-2-cluster.redisdemo.com:8443"
 re-cluster-url2 = "https://redis2-tf-us-east-1-cluster.redisdemo.com:8443"
 re-cluster-username = "admin@admin.com"
 re-cluster-username2 = "admin@admin.com"
- ```
+```
+
+**Accessing the Clusters**
+* Output name: `re-cluster-url` & `re-cluster-url2`
+    * go to chrome browser, enter in the output https address, accept the privacy button, log in via outputs `re-cluster-username` & `re-cluster-password`
+
+**Run Memtier Cmds**
+Run an ansible-playbook that contains configured memtier cmds for data loading and benchmark for each cluster. You can run the ansible-playbook from the terminal, so you do not need to access the `test-nodes` themselves. The ansible-playbook will access the `test-node` and run the memtier data load & benchmark.
+* Output name: `crdb_cluster1_memtier-ansible-playbook-cmd` & `crdb_cluster2_memtier-ansible-playbook-cmd`
+    * copy the output and run it in the terminal for one cluster, you will need to open a second terminal to run the other ansible playbook at the same time.
+    * The memtier cmds load data from the test node located in the clusters region into that cluster, then run a benchmark cmd. So if you want to run the data load and benchmark in both clusters at the same time, you will need to open two terminals and run each cmd in one of them.
 
 ## Cleanup
 
