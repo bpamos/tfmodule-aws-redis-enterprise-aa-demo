@@ -46,5 +46,6 @@ resource "null_resource" "ansible-run" {
     }
     depends_on = [local_file.dynamic_inventory_ini, 
                   time_sleep.wait_30_seconds, 
-                  local_file.extra_vars]
+                  local_file.extra_vars,
+                  local_file.group_vars_main_yaml]
 }
