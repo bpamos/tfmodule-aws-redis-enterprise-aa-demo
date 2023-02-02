@@ -2,13 +2,16 @@
 Deploy an Active-Active CRDB database between two Redis Enterprise Clusters in different regions.
 
 Then run memtier benchmark load test from tester nodes into each cluster.
-* (*If you do not want to run load test comment out `re-crdb-memtier` module*)
+* (*there will be outputs of 2 ansible playbook cmds to run the data load and benchmark memtier cmd straight from the terminal, no need to ssh into each tester node and run there*)
 
 
 * Example of deployment: (user can choose any number of RE nodes and any number of tester nodes to deploy)
 ![Alt text](image/TF-AA-DEMO.png?raw=true "Title")
 
 *********
+
+## Quick Start
+If you dont think you need to read the detailed instructions, please click here [Instructions-for-use](#instructions-for-use)
 
 ## Terraform Modules to provision the following:
 * Two new VPCs (VPC in region A & and VPC in region B)
@@ -18,13 +21,16 @@ Then run memtier benchmark load test from tester nodes into each cluster.
 * Test node with Redis and Memtier installed
 * DNS (NS and A records for Redis Enterprise nodes)
 * Create and Join Redis Enterprise cluster
+    * cluster creation options: redis on ram, redis on flash, and or rack zone awareness
 * Redis Enterprise License added to cluster (**User input of license file required**)
 * Create CRDB database between Cluster A & Cluster B
-* Run memtier benchmark commands from Tester nodes in each VPC to associated Cluster
+    * *note: auto-generated CRDB db will be a Redis on RAM without Rack Awareness by default*
+* print output of memtier benchmark commands that will run from Tester nodes in each VPC to associated Cluster
+    * (*note: you can run these in the terminal for more instructions* [run memtier commands](#run-memtier-cmds)
 
 ### !!!! Requirements !!!
 * Redis Enterprise Software (**Ubuntu 18.04**)
-* R53 DNS_hosted_zone_id
+* R53 DNS_hosted_zone_id *(if you do not have one already, go get a domain name on Route53)*
 * aws access key and secret key
 * an **AWS generated** SSH key for the region you are creating the cluster
     - *you must chmod 400 the key before use*
@@ -195,11 +201,11 @@ re-cluster-username = "admin@admin.com"
 re-cluster-username2 = "admin@admin.com"
 ```
 
-**Accessing the Clusters**
+#### Accessing the Clusters
 * Output name: `re-cluster-url` & `re-cluster-url2`
     * go to chrome browser, enter in the output https address, accept the privacy button, log in via outputs `re-cluster-username` & `re-cluster-password`
 
-**Run Memtier Cmds**
+#### Run Memtier Cmds
 Run an ansible-playbook that contains configured memtier cmds for data loading and benchmark for each cluster. You can run the ansible-playbook from the terminal, so you do not need to access the `test-nodes` themselves. The ansible-playbook will access the `test-node` and run the memtier data load & benchmark.
 * Output name: `crdb_cluster1_memtier-ansible-playbook-cmd` & `crdb_cluster2_memtier-ansible-playbook-cmd`
     * copy the output and run it in the terminal for one cluster, you will need to open a second terminal to run the other ansible playbook at the same time.
