@@ -32,8 +32,31 @@ If you dont think you need to read the detailed instructions, please click here 
 * Redis Enterprise Software (**Ubuntu 18.04**)
 * R53 DNS_hosted_zone_id *(if you do not have one already, go get a domain name on Route53)*
 * aws access key and secret key
-* an **AWS generated** SSH key for the region you are creating the cluster
+* an **AWS generated** SSH key for **each region** where you are creating a cluster
     - To create new keys: ([link](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html))
+        - BUT INCLUDE REGION PARAM
+    - EXAMPLE:
+    - REGION A SSH KEY
+    ```
+    aws ec2 create-key-pair \
+    --key-name my-key-pair-west \
+    --key-type rsa \
+    --key-format pem \
+    --query “KeyMaterial” \
+    --region “us-west-2" \
+    --output text > my-key-pair-west.pem
+    ```
+    - REGION B SSH KEY
+    ```
+        ```
+    aws ec2 create-key-pair \
+    --key-name my-key-pair-east \
+    --key-type rsa \
+    --key-format pem \
+    --query “KeyMaterial” \
+    --region “us-east-1" \
+    --output text > my-key-pair-east.pem
+    ```
     - *you must chmod 400 the key before use*
 * Redis Enterprise License File input in the `re-license` folder
     - Free Trial License found here ([link](https://redis.com/redis-enterprise-software/pricing/))

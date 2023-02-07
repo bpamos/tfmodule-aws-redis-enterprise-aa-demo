@@ -8,10 +8,11 @@
 aws_creds = 
 
 #### User Input Required
+#### MUST HAVE 1 SSH KEY CREATED IN EACH INDIVIDUAL REGION
 #### name of ssh key (.pem file) to be added to instance (AWS key pair name)
 #### ie. if your AWS ssh keys name is "my-ssh-key.pem", enter in "my-ssh-key"
 #### the SSH key must have already had "chmod 400 my-ssh-key.pem" run on it before using
-#### (To create new keys: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html)
+#### (To create new keys: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html) (but include region param)
 #### (fake example: ssh_key_name = "my-ssh-key")
 ssh_key_name1 = 
 ssh_key_name2 = 
