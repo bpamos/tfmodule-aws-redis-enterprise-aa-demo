@@ -33,9 +33,12 @@ If you dont think you need to read the detailed instructions, please click here 
 * R53 DNS_hosted_zone_id *(if you do not have one already, go get a domain name on Route53)*
 * aws access key and secret key
 * an **AWS generated** SSH key for the region you are creating the cluster
+    - To create new keys: ([link](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html))
     - *you must chmod 400 the key before use*
 * Redis Enterprise License File input in the `re-license` folder
     - Free Trial License found here ([link](https://redis.com/redis-enterprise-software/pricing/))
+* Redis Enterprise Software Download:
+    - ([link](https://redis.com/redis-enterprise-software/download-center/software/))
 
 ### Prerequisites
 * aws-cli (aws access key and secret key)

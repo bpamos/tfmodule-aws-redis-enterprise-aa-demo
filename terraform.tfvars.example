@@ -11,6 +11,7 @@ aws_creds =
 #### name of ssh key (.pem file) to be added to instance (AWS key pair name)
 #### ie. if your AWS ssh keys name is "my-ssh-key.pem", enter in "my-ssh-key"
 #### the SSH key must have already had "chmod 400 my-ssh-key.pem" run on it before using
+#### (To create new keys: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html)
 #### (fake example: ssh_key_name = "my-ssh-key")
 ssh_key_name1 = 
 ssh_key_name2 = 
@@ -84,6 +85,7 @@ test-node-count = 1
 
 #### User Input Required
 #### RE Software download url (MUST BE ubuntu 18.04)
+#### Find download here: https://redis.com/redis-enterprise-software/download-center/software/
 #### (FAKE example (update the x.x.xx with the Redis Software version!): re_download_url = "https://s3.amazonaws.com/redis-enterprise-software-downloads/x.x.xx/redislabs-x.x.xx-68-bionic-amd64.tar")
 re_download_url = 
 
