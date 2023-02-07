@@ -56,7 +56,7 @@ If you dont think you need to read the detailed instructions, please click here 
     --region “us-east-1" \
     --output text > my-key-pair-east.pem
     ```
-    - *you must chmod 400 the key before use*
+    - **you must chmod 400 the key before use**
 * Redis Enterprise License File input in the `re-license` folder
     - Free Trial License found here ([link](https://redis.com/redis-enterprise-software/pricing/))
 * Redis Enterprise Software Download:
