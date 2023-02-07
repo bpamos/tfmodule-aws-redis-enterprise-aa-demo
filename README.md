@@ -34,7 +34,7 @@ If you dont think you need to read the detailed instructions, please click here 
 * aws access key and secret key
 * an **AWS generated** SSH key for **each region** where you are creating a cluster
     - To create new keys: ([link](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html))
-        - BUT INCLUDE REGION PARAM
+        - MUST INCLUDE REGION PARAM
     - EXAMPLE:
     - REGION A SSH KEY
     ```
@@ -48,7 +48,6 @@ If you dont think you need to read the detailed instructions, please click here 
     ```
     - REGION B SSH KEY
     ```
-        ```
     aws ec2 create-key-pair \
     --key-name my-key-pair-east \
     --key-type rsa \
