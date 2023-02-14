@@ -34,9 +34,9 @@ If you dont think you need to read the detailed instructions, please click here 
 * aws access key and secret key
 * an **AWS generated** SSH key for **each region** where you are creating a cluster
     - To create new keys: ([link](https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html))
-        - MUST INCLUDE REGION PARAM
-    - EXAMPLE:
-    - REGION A SSH KEY
+        - **MUST INCLUDE REGION PARAMETER**
+    - Example:
+    - Region A SSH key
     ```
     aws ec2 create-key-pair \
     --key-name my-key-pair-west \
@@ -46,7 +46,7 @@ If you dont think you need to read the detailed instructions, please click here 
     --region “us-west-2" \
     --output text > my-key-pair-west.pem
     ```
-    - REGION B SSH KEY
+    - Region B SSH Key
     ```
     aws ec2 create-key-pair \
     --key-name my-key-pair-east \
@@ -57,6 +57,8 @@ If you dont think you need to read the detailed instructions, please click here 
     --output text > my-key-pair-east.pem
     ```
     - **you must chmod 400 the key before use**
+
+
 * Redis Enterprise License File input in the `re-license` folder
     - Free Trial License found here ([link](https://redis.com/redis-enterprise-software/pricing/))
 * Redis Enterprise Software Download:
@@ -66,7 +68,6 @@ If you dont think you need to read the detailed instructions, please click here 
 * aws-cli (aws access key and secret key)
 * terraform installed on local machine
 * ansible installed on local machine
-* VS Code
 * install `requirements.txt` file
     - `pip3 install -r requirements.txt`
 
