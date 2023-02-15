@@ -14,7 +14,7 @@ Then run memtier benchmark load test from tester nodes into each cluster.
 If you dont think you need to read the detailed instructions, please click here [Instructions-for-use](#instructions-for-use)
 
 ## Terraform Modules to provision the following:
-* Two new VPCs (VPC in region A & and VPC in region B)
+* Two new VPCs (VPC in region A & VPC in region B)
 * VPC peering between the two VPCs (inter-region VPC peering)
 * Route table association for VPC peer ID on both VPCs 
 * Any number of Redis Enterprise nodes and install Redis Enterprise software (ubuntu 18.04)
@@ -22,7 +22,7 @@ If you dont think you need to read the detailed instructions, please click here 
 * DNS (NS and A records for Redis Enterprise nodes)
 * Create and Join Redis Enterprise cluster
     * cluster creation options: redis on ram, redis on flash, and or rack zone awareness
-* Redis Enterprise License added to cluster (**User input of license file required**)
+* Redis Enterprise License added to cluster (**User input of license file required** [Input Redis Enterprise License File](#instructions-for-use))
 * Create CRDB database between Cluster A & Cluster B
     * *note: auto-generated CRDB db will be a Redis on RAM without Rack Awareness by default*
 * print output of memtier benchmark commands that will run from Tester nodes in each VPC to associated Cluster
