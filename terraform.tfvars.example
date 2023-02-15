@@ -14,13 +14,17 @@ aws_creds =
 #### the SSH key must have already had "chmod 400 my-ssh-key.pem" run on it before using
 #### (To create new keys: https://docs.aws.amazon.com/AWSEC2/latest/UserGuide/create-key-pairs.html) (but include region param)
 #### (fake example: ssh_key_name = "my-ssh-key")
-ssh_key_name1 = 
+## region A ssh key
+ssh_key_name1 =
+## region B ssh key 
 ssh_key_name2 = 
 
 #### User Input Required
 #### path to your the SSH key .pem file.
 #### (fake example: ssh_key_path = "~/keys/my-ssh-key.pem")
-ssh_key_path1 = 
+## region A ssh key path
+ssh_key_path1 =
+## region B ssh key path 
 ssh_key_path2 = 
 
 #### User Input Required
