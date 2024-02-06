@@ -103,7 +103,7 @@ module "vpc-peering-routetable1" {
     peer_vpc_id               = module.vpc2.vpc-id
     main_vpc_route_table_id   = module.vpc1.route-table-id
     vpc_peering_connection_id = module.vpc-peering-requestor.vpc_peering_connection_id
-    peer_vpc_cidr      = var.vpc_cidr2
+    peer_vpc_cidr             = var.vpc_cidr2
 
     depends_on = [
       module.vpc1, 
