@@ -4,7 +4,7 @@
 resource "aws_eip" "re_cluster_instance_eip" {
   count = var.data-node-count
   network_border_group = var.region
-  vpc      = true
+  domain     = "vpc"
 
   tags = {
       Name = format("%s-eip-%s", var.vpc_name, count.index+1),
@@ -26,7 +26,7 @@ resource "aws_eip_association" "re-eip-assoc" {
 resource "aws_eip" "test_node_eip" {
   count = var.test-node-count
   network_border_group = var.region
-  vpc      = true
+  domain     = "vpc"
 
   tags = {
       Name = format("%s-test-eip-%s", var.vpc_name, count.index+1),
