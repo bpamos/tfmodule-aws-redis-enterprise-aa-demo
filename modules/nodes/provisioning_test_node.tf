@@ -61,3 +61,43 @@ resource "null_resource" "ansible_test_run" {
   }
   depends_on = [null_resource.remote_config_test, time_sleep.wait_30_seconds_test]
 }
+
+
+
+
+############### INSTALL JAVA PROJECT
+######################
+# Deploy Java project on existing EC2 instance
+resource "null_resource" "deploy_java_project" {
+  count = var.test-node-count
+  provisioner "file" {
+    source      = "${path.module}/ansible/jedis-project/"
+    destination = "/tmp/"
+
+        connection {
+            type = "ssh"
+            user = "ubuntu"
+            private_key = file(var.ssh_key_path)
+            host = element(aws_eip.test_node_eip.*.public_ip, count.index)
+        }
+  }
+
+
+    depends_on = [aws_instance.test_node, 
+                aws_eip_association.test_eip_assoc, 
+                local_file.inventory_setup_test, 
+                local_file.ssh-setup-test,
+                time_sleep.wait_30_seconds_test,
+                null_resource.remote_config_test]
+}
+
+
+######################
+# Run ansible playbook to install java and maven
+resource "null_resource" "java-mvn-install" {
+  count = var.test-node-count
+  provisioner "local-exec" {
+    command = "ansible-playbook ${path.module}/ansible/playbooks/java_mvn_install.yaml --private-key ${var.ssh_key_path} -i /tmp/${var.vpc_name}_test_node_${count.index}.ini"
+  }
+  depends_on = [null_resource.deploy_java_project, time_sleep.wait_30_seconds_test]
+}
