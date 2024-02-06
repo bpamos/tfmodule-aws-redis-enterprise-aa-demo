@@ -1,0 +1,44 @@
+---
+- hosts: all
+  become: yes
+
+  tasks:
+    - name: Update the package list
+      apt:
+        update_cache: yes
+
+    - name: Install OpenJDK 8
+      apt:
+        name: openjdk-8-jdk
+        state: present
+
+    - name: Install Maven
+      apt:
+        name: maven
+        state: present
+
+    - name: Verify Java installation
+      command: java -version
+      register: java_version_output
+      changed_when: false
+      ignore_errors: yes
+
+    - debug:
+        var: java_version_output.stdout_lines
+
+    - name: Verify Maven installation
+      command: mvn -v
+      register: maven_version_output
+      changed_when: false
+      ignore_errors: yes
+
+    - name: Change into the project directory
+      command: cd /tmp/jedis-failover-demo
+      args:
+        chdir: /tmp/jedis-failover-demo
+      ignore_errors: yes
+
+    - name: Clean and install the Maven project
+      command: mvn clean install
+      args:
+        chdir: /tmp/jedis-failover-demo
