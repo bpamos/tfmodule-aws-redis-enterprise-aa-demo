@@ -72,12 +72,12 @@ resource "null_resource" "deploy_java_project" {
 }
 
 
-# ######################
-# # Run ansible playbook to install java and maven
-# resource "null_resource" "java-mvn-install" {
-#   count = var.test-node-count
-#   provisioner "local-exec" {
-#     command = "ansible-playbook ${path.module}/ansible/playbooks/java_mvn_install.yaml --private-key ${var.ssh_key_path} -i /tmp/${var.vpc_name}_test_node_${count.index}.ini"
-#   }
-#   depends_on = [null_resource.deploy_java_project, time_sleep.wait_30_seconds_test]
-# }
+######################
+# Run ansible playbook to install java and maven
+resource "null_resource" "java-mvn-install" {
+  count = var.test-node-count
+  provisioner "local-exec" {
+    command = "ansible-playbook ${path.module}/ansible/playbooks/java_mvn_install.yaml --private-key ${var.ssh_key_path} -i /tmp/${var.vpc_name}_test_node_${count.index}.ini"
+  }
+  depends_on = [null_resource.deploy_java_project, time_sleep.wait_30_seconds_test]
+}
