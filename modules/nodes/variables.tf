@@ -55,12 +55,12 @@ variable "test_instance_type" {
 
 ############## Redis Enterprise Nodes Variables
 
-#### RE Software download url (MUST BE ubuntu 18.04)
-#### example: re_download_url = "https://s3.amazonaws.com/redis-enterprise-software-downloads/x.x.xx/redislabs-x.x.xx-68-bionic-amd64.tar"
-variable "re_download_url" {
-  description = "re download url"
-  default     = ""
-}
+# #### RE Software download url (MUST BE ubuntu 18.04)
+# #### example: re_download_url = "https://s3.amazonaws.com/redis-enterprise-software-downloads/x.x.xx/redislabs-x.x.xx-68-bionic-amd64.tar"
+# variable "re_download_url" {
+#   description = "re download url"
+#   default     = ""
+# }
 
 #### how many data nodes, 3 minimum
 variable "data-node-count" {
