@@ -51,6 +51,32 @@ output "route-table-id1" {
   value = module.vpc1.route-table-id
 }
 
+########### Security Group Module
+#### create a security group
+module "security-group1" {
+    source             = "./modules/security-group"
+    providers = {
+      aws = aws.a
+    }
+    owner              = var.owner
+    vpc_cidr           = var.vpc_cidr1
+    allow-public-ssh   = var.allow-public-ssh
+    open-nets          = var.open-nets
+    ### vars pulled from previous modules
+    ## from vpc module outputs 
+    vpc_name           = module.vpc1.vpc-name
+    vpc_id             = module.vpc1.vpc-id
+
+    depends_on = [
+      module.vpc1
+    ]
+}
+
+output "aws_security_group_id1" {
+  description = "aws security group"
+  value = module.security-group1.aws_security_group_id
+}
+
 ######
 #### VPC Peering Modules
 #### VPC peering is broken into 2 modules because you need to 
@@ -113,12 +139,58 @@ module "vpc-peering-routetable1" {
     ]
 }
 
+
+####################################
+########### Node Redis Enterprise Module
+#### Create the nodes that will be used for Redis Enterprise
+#### Just create the nodes and associated infra.
+#### configure them and install RE in the config module.
+module "nodes-re1" {
+    source             = "./modules/nodes-re"
+    providers = {
+      aws = aws.a
+    }
+    owner              = var.owner
+    region             = var.region1
+    vpc_cidr           = var.vpc_cidr1
+    subnet_azs         = var.subnet_azs1
+    ssh_key_name       = var.ssh_key_name1
+    ssh_key_path       = var.ssh_key_path1
+    data-node-count    = var.data-node-count
+    re_instance_type   = var.re_instance_type
+    re-volume-size     = var.re-volume-size
+    ### vars pulled from previous modules
+    security_group_id  = module.security-group1.aws_security_group_id
+    ## from vpc module outputs 
+    vpc_name           = module.vpc1.vpc-name
+    vpc_subnets_ids    = module.vpc1.subnet-ids
+    vpc_id             = module.vpc1.vpc-id
+
+    depends_on = [
+      module.vpc1,
+      module.security-group1
+    ]
+}
+
+#### Node Outputs to use in future modules
+output "re-data-node-eips1" {
+  value = module.nodes-re1.re-data-node-eips
+}
+
+output "re-data-node-internal-ips1" {
+  value = module.nodes-re1.re-data-node-internal-ips
+}
+
+output "re-data-node-eip-public-dns1" {
+  value = module.nodes-re1.re-data-node-eip-public-dns
+}
+
+
 ########### Node Module
-#### Create RE and Test nodes
-#### Ansible playbooks configure and install RE software on nodes
-#### Ansible playbooks configure Test node with Redis and Memtier
-module "nodes1" {
-    source             = "./modules/nodes"
+#### Create Test nodes
+#### Create the test nodes and their associated infra
+module "nodes-tester1" {
+    source             = "./modules/nodes-tester"
     providers = {
       aws = aws.a
     }
@@ -130,31 +202,111 @@ module "nodes1" {
     ssh_key_path       = var.ssh_key_path1
     test_instance_type = var.test_instance_type
     test-node-count    = var.test-node-count
-    re_download_url    = var.re_download_url
-    data-node-count    = var.data-node-count
-    re_instance_type   = var.re_instance_type
-    re-volume-size     = var.re-volume-size
-    allow-public-ssh   = var.allow-public-ssh
-    open-nets          = var.open-nets
     ### vars pulled from previous modules
+    security_group_id  = module.security-group1.aws_security_group_id
     ## from vpc module outputs 
     vpc_name           = module.vpc1.vpc-name
     vpc_subnets_ids    = module.vpc1.subnet-ids
     vpc_id             = module.vpc1.vpc-id
+
+    depends_on = [
+      module.vpc1,
+      module.security-group1
+    ]
 }
 
 #### Node Outputs to use in future modules
-output "re-data-node-eips1" {
-  value = module.nodes1.re-data-node-eips
+output "test-node-eips1" {
+  value = module.nodes-tester1.test-node-eips
 }
 
-output "re-data-node-internal-ips1" {
-  value = module.nodes1.re-data-node-internal-ips
+output "test-node-internal-ips1" {
+  value = module.nodes-tester1.test-node-internal-ips
 }
 
-output "re-data-node-eip-public-dns1" {
-  value = module.nodes1.re-data-node-eip-public-dns
+output "test-node-eip-public-dns1" {
+  value = module.nodes-tester1.test-node-eip-public-dns
 }
+
+
+#####################################
+
+#### Configure Redis Enterprise nodes
+#### Ansible playbooks configure and install RE software on nodes
+module "nodes-config-re-1" {
+    source             = "./modules/nodes-config-re"
+    providers = {
+      aws = aws.a
+    }
+    ssh_key_name       = var.ssh_key_name1
+    ssh_key_path       = var.ssh_key_path1
+    re_download_url    = var.re_download_url
+    data-node-count    = var.data-node-count
+    ### vars pulled from previous modules
+    ## from vpc module outputs 
+    vpc_name           = module.vpc1.vpc-name
+    vpc_id             = module.vpc1.vpc-id
+    aws_eips           = module.nodes-re1.re-data-node-eips
+
+    depends_on = [
+      module.nodes-re1
+    ]
+}
+
+
+#### Create Test nodes
+#### Ansible playbooks configure Test node with Redis and Memtier
+module "nodes-config-redisoss-1" {
+    source             = "./modules/nodes-config-redisoss"
+    providers = {
+      aws = aws.a
+    }
+    ssh_key_name       = var.ssh_key_name1
+    ssh_key_path       = var.ssh_key_path1
+    test_instance_type = var.test_instance_type
+    test-node-count    = var.test-node-count
+    ### vars pulled from previous modules
+    ## from vpc module outputs 
+    vpc_name           = module.vpc1.vpc-name
+    vpc_id             = module.vpc1.vpc-id
+    aws_eips           = module.nodes-tester1.test-node-eips
+
+    depends_on = [
+      module.nodes-tester1
+    ]
+}
+
+#### Create Test nodes
+#### Ansible playbooks configure Test node with Redis and Memtier
+module "nodes-config-jedis-1" {
+    source             = "./modules/nodes-config-jedis"
+    providers = {
+      aws = aws.a
+    }
+    ssh_key_name       = var.ssh_key_name1
+    ssh_key_path       = var.ssh_key_path1
+    test-node-count    = var.test-node-count
+    ### vars pulled from previous modules
+    ## from vpc module outputs 
+    vpc_name           = module.vpc1.vpc-name
+    vpc_id             = module.vpc1.vpc-id
+    aws_eips           = module.nodes-tester1.test-node-eips
+
+    depends_on = [
+      module.nodes-tester1,
+      module.nodes-config-redisoss-1
+    ]
+}
+
+# output "mvn_command" {
+#   description = "Formatted Maven command with private endpoint values."
+#   value = <<-EOT
+#     mvn compile exec:java -Dexec.cleanupDaemonThreads=false -Dexec.args="--failover true --host ${module.rc-aa-db.private_endpoints_list[0].endpoint.hostname} --port ${module.rc-aa-db.private_endpoints_list[0].endpoint.port} --password ${var.rc_db_password} --host2 ${module.rc-aa-db.private_endpoints_list[1].endpoint.hostname} --port2 ${module.rc-aa-db.private_endpoints_list[1].endpoint.port} --password2 ${var.rc_db_password}"
+#   EOT
+#   depends_on = [module.nodes-config-java-1, module.rc-aa-db]
+# }
+
+
 
 ########### DNS Module
 #### Create DNS (NS record, A records for each RE node and its eip)
@@ -168,7 +320,7 @@ module "dns1" {
     data-node-count    = var.data-node-count
     ### vars pulled from previous modules
     vpc_name           = module.vpc1.vpc-name
-    re-data-node-eips  = module.nodes1.re-data-node-eips
+    re-data-node-eips  = module.nodes-re1.re-data-node-eips
 }
 
 #### dns FQDN output used in future modules
@@ -191,12 +343,16 @@ module "create-cluster1" {
   rack_awareness       = var.rack_awareness
   ### vars pulled from previous modules
   vpc_name             = module.vpc1.vpc-name
-  re-node-internal-ips = module.nodes1.re-data-node-internal-ips
-  re-node-eip-ips      = module.nodes1.re-data-node-eips
-  re-data-node-eip-public-dns   = module.nodes1.re-data-node-eip-public-dns
+  re-node-internal-ips = module.nodes-re1.re-data-node-internal-ips
+  re-node-eip-ips      = module.nodes-re1.re-data-node-eips
+  re-data-node-eip-public-dns   = module.nodes-re1.re-data-node-eip-public-dns
   dns_fqdn             = module.dns1.dns-ns-record-name
   
-  depends_on           = [module.vpc1, module.nodes1, module.dns1]
+  depends_on           = [
+    module.vpc1, 
+    module.nodes-re1, 
+    module.nodes-config-re-1, 
+    module.dns1]
 }
 
 #### Cluster Outputs
@@ -234,8 +390,10 @@ module "create-crdbs" {
 
   depends_on           = [module.vpc1,
                           module.vpc2,
-                          module.nodes1,
-                          module.nodes2, 
+                          module.nodes-re1,
+                          module.nodes-config-re-1,
+                          module.nodes-re2,
+                          module.nodes-config-re-2, 
                           module.dns1,
                           module.dns2, 
                           module.create-cluster1, 
@@ -277,8 +435,12 @@ module "memtier_benchmark1" {
   
   depends_on           = [module.vpc1,
                           module.vpc2,
-                          module.nodes1,
-                          module.nodes2, 
+                          module.nodes-re1,
+                          module.nodes-config-re-1,
+                          module.nodes-config-redisoss-1,
+                          module.nodes-re2,
+                          module.nodes-config-re-2,
+                          module.nodes-config-redisoss-2, 
                           module.dns1,
                           module.dns2,
                           module.create-cluster1, 
