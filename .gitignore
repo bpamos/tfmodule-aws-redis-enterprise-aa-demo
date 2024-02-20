@@ -3,6 +3,7 @@
 
 # Local .terraform directories
 **/.terraform/*
+**/modules/nodes-config-jedis/ansible/jedis-project/jedis-failover-demo/target/*
 
 **/re-license.txt
 
