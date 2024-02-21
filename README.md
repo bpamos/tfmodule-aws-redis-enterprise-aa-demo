@@ -264,6 +264,8 @@ Ansible Redis PS Repo:
 sudo su -
 cd /tmp/jedis-failover-demo
 
-mvn compile exec:java -Dexec.cleanupDaemonThreads=false -Dexec.args="--failover true --host redis-12001.bamos1-tf-us-west-2-cluster.redisdemo.com --port 12001 --password password --host2 redis-12001.bamos2-tf-us-east-1-cluster.redisdemo.com --port2 12001 --password2 password"
+mvn compile exec:java -Dexec.cleanupDaemonThreads=false -Dexec.args="--failover true --host redis-11319.internal.mc681-0.us-east-1-mz.ec2.cloud.rlrcp.com --port 11319 --password password --host2 redis-11319.internal.mc681-1.us-west-2-mz.ec2.cloud.rlrcp.com --port2 11319 --password2 password"
+
+
 
 ```
