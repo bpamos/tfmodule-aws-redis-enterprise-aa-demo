@@ -411,6 +411,11 @@ variable "crdb_port" {
     default     = 12000
 }
 
+variable "crdb_db_password" {
+    description = "crdb password"
+    default     = "password"
+}
+
 variable "crdb_memory_size" {
     description = "memory size in bytes"
     default     = 5024000000
