@@ -276,38 +276,6 @@ module "nodes-config-redisoss-1" {
     ]
 }
 
-#### Create Test nodes
-#### Ansible playbooks configure Test node with Redis and Memtier
-module "nodes-config-jedis-1" {
-    source             = "./modules/nodes-config-jedis"
-    providers = {
-      aws = aws.a
-    }
-    ssh_key_name       = var.ssh_key_name1
-    ssh_key_path       = var.ssh_key_path1
-    test-node-count    = var.test-node-count
-    ### vars pulled from previous modules
-    ## from vpc module outputs 
-    vpc_name           = module.vpc1.vpc-name
-    vpc_id             = module.vpc1.vpc-id
-    aws_eips           = module.nodes-tester1.test-node-eips
-
-    depends_on = [
-      module.nodes-tester1,
-      module.nodes-config-redisoss-1
-    ]
-}
-
-# output "mvn_command" {
-#   description = "Formatted Maven command with private endpoint values."
-#   value = <<-EOT
-#     mvn compile exec:java -Dexec.cleanupDaemonThreads=false -Dexec.args="--failover true --host ${module.rc-aa-db.private_endpoints_list[0].endpoint.hostname} --port ${module.rc-aa-db.private_endpoints_list[0].endpoint.port} --password ${var.rc_db_password} --host2 ${module.rc-aa-db.private_endpoints_list[1].endpoint.hostname} --port2 ${module.rc-aa-db.private_endpoints_list[1].endpoint.port} --password2 ${var.rc_db_password}"
-#   EOT
-#   depends_on = [module.nodes-config-java-1, module.rc-aa-db]
-# }
-
-
-
 ########### DNS Module
 #### Create DNS (NS record, A records for each RE node and its eip)
 #### Currently using existing dns hosted zone
@@ -382,6 +350,7 @@ module "create-crdbs" {
   #### crdb db inputs
   crdb_db_name         = var.crdb_db_name
   crdb_port            = var.crdb_port
+  crdb_db_password     = var.crdb_db_password
   crdb_memory_size     = var.crdb_memory_size
   crdb_replication     = var.crdb_replication
   crdb_aof_policy      = var.crdb_aof_policy
