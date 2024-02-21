@@ -34,3 +34,23 @@ variable "aws_eips" {
   description = "list of eips"
   default     = []
 }
+
+variable "crdb_endpoint_cluster1" {
+  description = "crdb endpoint 1"
+  default     = ""
+}
+
+variable "crdb_endpoint_cluster2" {
+  description = "crdb endpoint 2"
+  default     = ""
+}
+
+variable "crdb_port" {
+  description = "crdb port"
+  default     = ""
+}
+
+variable "crdb_db_password" {
+    description = "crdb password"
+    default     = "password"
+}
