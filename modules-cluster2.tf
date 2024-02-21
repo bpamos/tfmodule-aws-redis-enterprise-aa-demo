@@ -99,7 +99,7 @@ module "vpc-peering-routetable2" {
 #### Just create the nodes and associated infra.
 #### configure them and install RE in the config module.
 module "nodes-re2" {
-    source             = "./modules/nodes-re"
+    source             = "./modules/nodes"
     providers = {
       aws = aws.b
     }
@@ -109,9 +109,11 @@ module "nodes-re2" {
     subnet_azs         = var.subnet_azs2
     ssh_key_name       = var.ssh_key_name2
     ssh_key_path       = var.ssh_key_path2
-    data-node-count    = var.data-node-count
-    re_instance_type   = var.re_instance_type
-    re-volume-size     = var.re-volume-size
+    node-count         = var.data-node-count
+    ec2_instance_type  = var.re_instance_type
+    node-prefix        = var.node-prefix-re
+    ebs-volume-size    = var.re-volume-size
+    create_ebs_volumes = var.create_ebs_volumes_re
     ### vars pulled from previous modules
     security_group_id  = module.security-group2.aws_security_group_id
     ## from vpc module outputs 
@@ -127,23 +129,25 @@ module "nodes-re2" {
 
 #### Node Outputs to use in future modules
 output "re-data-node-eips2" {
-  value = module.nodes-re2.re-data-node-eips
+  value = module.nodes-re2.node-eips
 }
 
 output "re-data-node-internal-ips2" {
-  value = module.nodes-re2.re-data-node-internal-ips
+  value = module.nodes-re2.node-internal-ips
 }
 
 output "re-data-node-eip-public-dns2" {
-  value = module.nodes-re2.re-data-node-eip-public-dns
+  value = module.nodes-re2.node-eip-public-dns
 }
 
 
+####################################
 ########### Node Module
 #### Create Test nodes
 #### Create the test nodes and their associated infra
+#### configure them and install RE in the config module.
 module "nodes-tester2" {
-    source             = "./modules/nodes-tester"
+    source             = "./modules/nodes"
     providers = {
       aws = aws.b
     }
@@ -153,8 +157,10 @@ module "nodes-tester2" {
     subnet_azs         = var.subnet_azs2
     ssh_key_name       = var.ssh_key_name2
     ssh_key_path       = var.ssh_key_path2
-    test_instance_type = var.test_instance_type
-    test-node-count    = var.test-node-count
+    node-count         = var.test-node-count
+    node-prefix        = var.node-prefix-tester
+    ec2_instance_type  = var.test_instance_type
+    create_ebs_volumes = var.create_ebs_volumes_tester
     ### vars pulled from previous modules
     security_group_id  = module.security-group2.aws_security_group_id
     ## from vpc module outputs 
@@ -170,16 +176,17 @@ module "nodes-tester2" {
 
 #### Node Outputs to use in future modules
 output "test-node-eips2" {
-  value = module.nodes-tester2.test-node-eips
+  value = module.nodes-tester2.node-eips
 }
 
 output "test-node-internal-ips2" {
-  value = module.nodes-tester2.test-node-internal-ips
+  value = module.nodes-tester2.node-internal-ips
 }
 
 output "test-node-eip-public-dns2" {
-  value = module.nodes-tester2.test-node-eip-public-dns
+  value = module.nodes-tester2.node-eip-public-dns
 }
+
 
 
 
@@ -198,7 +205,7 @@ module "nodes-config-re-2" {
     ## from vpc module outputs 
     vpc_name           = module.vpc2.vpc-name
     vpc_id             = module.vpc2.vpc-id
-    aws_eips           = module.nodes-re2.re-data-node-eips
+    aws_eips           = module.nodes-re2.node-eips
 
     depends_on = [
       module.nodes-re2
@@ -221,7 +228,7 @@ module "nodes-config-redisoss-2" {
     ## from vpc module outputs 
     vpc_name           = module.vpc2.vpc-name
     vpc_id             = module.vpc2.vpc-id
-    aws_eips           = module.nodes-tester2.test-node-eips
+    aws_eips           = module.nodes-tester2.node-eips
 
     depends_on = [
       module.nodes-tester2
@@ -242,7 +249,7 @@ module "nodes-config-jedis-2" {
     ## from vpc module outputs 
     vpc_name           = module.vpc2.vpc-name
     vpc_id             = module.vpc2.vpc-id
-    aws_eips           = module.nodes-tester2.test-node-eips
+    aws_eips           = module.nodes-tester2.node-eips
 
     depends_on = [
       module.nodes-tester2,
@@ -263,7 +270,7 @@ module "dns2" {
     data-node-count    = var.data-node-count
     ### vars pulled from previous modules
     vpc_name           = module.vpc2.vpc-name
-    re-data-node-eips  = module.nodes-re2.re-data-node-eips
+    re-data-node-eips  = module.nodes-re2.node-eips
 }
 
 #### dns FQDN output used in future modules
@@ -286,9 +293,9 @@ module "create-cluster2" {
   rack_awareness       = var.rack_awareness
   ### vars pulled from previous modules
   vpc_name             = module.vpc2.vpc-name
-  re-node-internal-ips = module.nodes-re2.re-data-node-internal-ips
-  re-node-eip-ips      = module.nodes-re2.re-data-node-eips
-  re-data-node-eip-public-dns   = module.nodes-re2.re-data-node-eip-public-dns
+  re-node-internal-ips = module.nodes-re2.node-internal-ips
+  re-node-eip-ips      = module.nodes-re2.node-eips
+  re-data-node-eip-public-dns   = module.nodes-re2.node-eip-public-dns
   dns_fqdn             = module.dns2.dns-ns-record-name
   
   depends_on           = [

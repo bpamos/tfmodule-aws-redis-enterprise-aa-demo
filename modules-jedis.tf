@@ -7,14 +7,14 @@ module "nodes-config-jedis-1" {
     providers = {
       aws = aws.a
     }
-    ssh_key_name       = var.ssh_key_name1
-    ssh_key_path       = var.ssh_key_path1
-    test-node-count    = var.test-node-count
+    ssh_key_name           = var.ssh_key_name1
+    ssh_key_path           = var.ssh_key_path1
+    test-node-count        = var.test-node-count
     ### vars pulled from previous modules
     ## from vpc module outputs 
-    vpc_name           = module.vpc1.vpc-name
-    vpc_id             = module.vpc1.vpc-id
-    aws_eips           = module.nodes-tester1.test-node-eips
+    vpc_name               = module.vpc1.vpc-name
+    vpc_id                 = module.vpc1.vpc-id
+    aws_eips               = module.nodes-tester1.node-eips
     crdb_endpoint_cluster1 = module.create-crdbs.crdb_endpoint_cluster1
     crdb_endpoint_cluster2 = module.create-crdbs.crdb_endpoint_cluster2
     crdb_port              = var.crdb_port
