@@ -40,22 +40,9 @@ variable "subnet_azs" {
     default = [""]
 }
 
-############## Redis Enterprise Nodes Variables
-
-#### how many data nodes, 3 minimum
-variable "data-node-count" {
-  description = "number of data nodes"
-  default     = 3
-}
-
 variable "ena-support" {
   description = "choose AMIs that have ENA support enabled"
   default     = true
-}
-
-variable "re_instance_type" {
-    description = "re instance type"
-    default     = "t2.xlarge"
 }
 
 variable "node-root-size" {
@@ -63,15 +50,40 @@ variable "node-root-size" {
   default     = "50"
 }
 
-##### EBS volume for persistent and ephemeral storage
-variable "re-volume-size" {
-  description = "The size of the ephemeral and persistent volumes to attach"
-  default     = "150"
-}
-
 #### Security
 
 variable "security_group_id" {
   description = "security group id"
   default     = ""
+}
+
+
+#############
+variable "create_ebs_volumes" {
+  description = "Whether to create EBS volume or not"
+  type        = bool
+  default     = false
+}
+
+
+variable "node-count" {
+  description = "number of nodes"
+  default     = 1
+}
+
+ 
+variable "node-prefix" {
+  description = "node prefix"
+  default     = ""
+}
+
+variable "ec2_instance_type" {
+    description = "re instance type"
+    default     = "t2.xlarge"
+}
+
+##### EBS volume for persistent and ephemeral storage
+variable "ebs-volume-size" {
+  description = "The size of the ephemeral and persistent volumes to attach"
+  default     = "150"
 }
