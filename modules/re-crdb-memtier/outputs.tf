@@ -2,14 +2,14 @@
 
 output "memtier-data-load-cmd" {
   description = "memtier data load cmd"
-  value = format("%s -s %s -p %s", var.memtier_data_load_cluster, var.crdb_endpoint_cluster, var.crdb_port)
+  value = format("%s -s %s -p %s -a %s", var.memtier_data_load_cluster, var.crdb_endpoint_cluster, var.crdb_port, var.crdb_db_password)
 }
 
 
 
 output "memtier-benchmark-cmd" {
   description = "memtier benchmark cmd"
-  value = format("%s -s %s -p %s", var.memtier_benchmark_cmd, var.crdb_endpoint_cluster, var.crdb_port)
+  value = format("%s -s %s -p %s -a %s", var.memtier_benchmark_cmd, var.crdb_endpoint_cluster, var.crdb_port, var.crdb_db_password)
 }
 
 output "memtier-ansible-playbook-cmd" {

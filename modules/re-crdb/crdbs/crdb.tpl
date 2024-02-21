@@ -13,6 +13,7 @@ pwd2         = "${pwd2}"
 # db info
 db_name      = "${db_name}"
 port         = ${port}
+db_password  = "${db_password}"
 memory_size  = ${memory_size}
 replication  = ${replication}
 aof_policy   = "${aof_policy}"
@@ -27,6 +28,7 @@ headers = {
 json_data = {
     'default_db_config': {
         'name': db_name,
+        'authentication_redis_pass': db_password,
         'bigstore': False,
         'replication': replication,
         'memory_size': memory_size,

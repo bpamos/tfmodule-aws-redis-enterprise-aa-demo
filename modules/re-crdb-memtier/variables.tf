@@ -16,6 +16,11 @@ variable "crdb_port" {
   description = "The crdb port"
 }
 
+variable "crdb_db_password" {
+    description = "crdb password"
+    default     = "password"
+}
+
 variable "crdb_endpoint_cluster" {
   description = "crdb endpoint"
 }

@@ -13,6 +13,7 @@ resource "local_file" "memtier-benchmark" {
       memtier_benchmark_cmd     = var.memtier_benchmark_cmd
       crdb_endpoint_cluster     = var.crdb_endpoint_cluster
       crdb_port                 = var.crdb_port
+      crdb_db_password          = var.crdb_db_password
     })
     filename = "${path.module}/ansible/${var.vpc_name}_memtier_playbook.yaml"
 }
