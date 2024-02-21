@@ -1,0 +1,30 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+
+  tasks:
+    - name: Extract and run mvn command
+      ansible.builtin.shell:
+        cmd: |
+          cd /tmp/jedis-failover-demo/
+          {{ jedis_cmd | regex_replace('EOT', '') }}
+      vars:
+        jedis_cmd: ${jedis_cmd}
+      register: mvn_output
+      async: 300  # Set a timeout for the task
+      poll: 10    # Check for output every 10 seconds
+
+    - name: Wait for the task to complete
+      async_status:
+        jid: "{{ mvn_output.ansible_job_id }}"
+      register: job_result
+      until: job_result.finished
+      retries: 300  # Adjust as needed based on the async timeout
+      delay: 10     # Adjust as needed based on the poll interval
+
+    - debug:
+        msg: "{{ item }}"
+      with_items: "{{ job_result.results[0].ansible_job_result.stdout_lines }}"
