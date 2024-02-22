@@ -71,7 +71,7 @@ output "test-node-eip-public-dns1" {
 
 #### Deploy front end on test node
 #### Ansible playbooks configure Test node with front end
-module "nodes-deploy-frontend1" {
+module "nodes-deploy-frontend" {
     source             = "./modules/nodes-frontend"
     providers = {
       aws = aws.a
