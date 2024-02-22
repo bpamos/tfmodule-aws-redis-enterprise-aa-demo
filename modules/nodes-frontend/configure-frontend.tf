@@ -35,7 +35,7 @@ resource "local_file" "ssh-setup" {
 
 
 # Run Ansible playbook to configure front end
-resource "null_resource" "ansible_run" {
+resource "null_resource" "ansible_run1" {
     count = var.test-node-count
     provisioner "local-exec" {
         command = "ansible-playbook ${path.module}/ansible/playbooks/playbook-deploy-frontend.yaml --private-key ${var.ssh_key_path} -i /tmp/${var.vpc_name}_test_node_${count.index}.ini"
