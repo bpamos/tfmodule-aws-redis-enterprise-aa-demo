@@ -16,6 +16,7 @@ resource "local_file" "crdb_tpl" {
         # db info
         db_name      = var.crdb_db_name
         port         = var.crdb_port
+        db_password  = var.crdb_db_password
         memory_size  = var.crdb_memory_size
         replication  = var.crdb_replication
         aof_policy   = var.crdb_aof_policy

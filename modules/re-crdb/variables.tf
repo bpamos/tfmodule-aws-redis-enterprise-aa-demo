@@ -35,6 +35,11 @@ variable "crdb_port" {
     description = "crdb port"
 }
 
+variable "crdb_db_password" {
+    description = "crdb password"
+    default     = "password"
+}
+
 variable "crdb_memory_size" {
     description = "crdb memory size in bytes"
 }

@@ -86,6 +86,7 @@ If you dont think you need to read the detailed instructions, please click here 
     ```
     # create virtual environment
     python3 -m venv ./venv
+    source ./venv/bin/activate
     # Check if you have pip
     python3 -m pip -V
     # Install ansible and check if it is in path
@@ -254,3 +255,17 @@ Terraform and Ansible repo for installing RE on ubuntu 18.04 nodes:
 
 Ansible Redis PS Repo:
 * https://github.com/Redislabs-Solution-Architects/ansible-redis
+
+
+
+
+######
+```bash
+sudo su -
+cd /tmp/jedis-failover-demo
+
+mvn compile exec:java -Dexec.cleanupDaemonThreads=false -Dexec.args="--failover true --host FIXME --port FIXME --password FIXME --host2 FIXME --port2 FIXME --password2 FIXME"
+
+
+
+```

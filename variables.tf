@@ -89,6 +89,11 @@ variable "test-node-count" {
   default     = 1
 }
 
+variable "node-prefix-tester" {
+  description = "node prefix"
+  default     = "tester"
+}
+
 variable "test_instance_type" {
     description = "instance type to use. Default: t3.micro"
     default = "t3.micro"
@@ -121,6 +126,11 @@ variable "ena-support" {
   default     = true
 }
 
+variable "node-prefix-re" {
+  description = "node prefix"
+  default     = "re"
+}
+
 variable "re_instance_type" {
     description = "re instance type"
     default     = "t2.xlarge"
@@ -132,6 +142,18 @@ variable "node-root-size" {
 }
 
 #### EBS volume for persistent and ephemeral storage
+variable "create_ebs_volumes_re" {
+  description = "Whether to create EBS volume or not"
+  type        = bool
+  default     = true
+}
+
+variable "create_ebs_volumes_tester" {
+  description = "Whether to create EBS volume or not"
+  type        = bool
+  default     = false
+}
+
 variable "re-volume-size" {
   description = "The size of the ephemeral and persistent volumes to attach"
   default     = "150"
@@ -409,6 +431,11 @@ variable "crdb_db_name" {
 variable "crdb_port" {
     description = "crdb port"
     default     = 12000
+}
+
+variable "crdb_db_password" {
+    description = "crdb password"
+    default     = "password"
 }
 
 variable "crdb_memory_size" {

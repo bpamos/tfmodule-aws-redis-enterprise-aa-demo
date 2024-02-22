@@ -2,20 +2,16 @@
 #### run memtier data load and benchmark commands from tester node
 
 #### Sleeper, just to make sure nodes module is complete and everything is installed
-resource "time_sleep" "wait_60_seconds" {
-  create_duration = "60s"
+resource "time_sleep" "wait_30_seconds" {
+  create_duration = "30s"
 }
 
 ##### Generate extra_vars.yaml file
-resource "local_file" "memtier-benchmark" {
-    content  = templatefile("${path.module}/ansible/memtier_playbook.yaml.tpl", {
-      memtier_data_load_cluster = var.memtier_data_load_cluster
-      memtier_benchmark_cmd     = var.memtier_benchmark_cmd
-      crdb_endpoint_cluster     = var.crdb_endpoint_cluster
-      crdb_port                 = var.crdb_port
-      crdb_db_password          = var.crdb_db_password
+resource "local_file" "run-jedis" {
+    content  = templatefile("${path.module}/ansible/jedis_playbook.yaml.tpl", {
+      jedis_cmd = var.mvn_command
     })
-    filename = "${path.module}/ansible/${var.vpc_name}_memtier_playbook.yaml"
+    filename = "${path.module}/ansible/${var.vpc_name}_jedis_playbook.yaml"
 }
 
 ######################
