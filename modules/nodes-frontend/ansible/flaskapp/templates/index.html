@@ -1,0 +1,23 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Flask Java Integration</title>
+</head>
+<body>
+    <h1>Hello, world! This is your Flask application.</h1>
+    <button id="startJavaApp">Start Java App</button>
+
+    <script>
+        document.getElementById('startJavaApp').addEventListener('click', function() {
+            fetch('/start_java_app', {
+                method: 'POST'
+            })
+            .then(response => response.text())
+            .then(message => alert(message))
+            .catch(error => console.error('Error starting Java app:', error));
+        });
+    </script>
+</body>
+</html>
