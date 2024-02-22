@@ -1,0 +1,47 @@
+---
+- hosts: all
+  become: yes
+  become_user: root
+  become_method: sudo
+  gather_facts: yes
+  vars:
+    flask_app_path: "${path.module}/ansible/flaskapp/"
+
+  tasks:
+    - name: Update apt cache
+      apt:
+        update_cache: yes
+
+    - name: Install Python 3 and pip
+      apt:
+        name: python3-pip
+        state: present
+
+    - name: Install Flask
+      pip:
+        name: flask
+
+    # Add tasks to copy your Flask application files to the EC2 instance
+    - name: Copy Flask application files
+      copy:
+        src: "{{ playbook_dir | dirname }}/flaskapp/"
+        dest: /var/www/flask_app
+        owner: root
+        group: root
+        mode: '0755'
+
+    - name: Install Gunicorn
+      pip:
+        name: gunicorn
+
+    - name: Start Flask application using Gunicorn
+      command: nohup gunicorn -b 0.0.0.0:8000 -w 4 -t 300 app:app &
+      args:
+        chdir: /var/www/flask_app
+      async: 30
+      poll: 0
+      become: yes
+      become_user: root
+      become_method: sudo
+
+    # Add any additional tasks as needed
