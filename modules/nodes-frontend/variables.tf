@@ -29,3 +29,9 @@ variable "aws_eips" {
   description = "list of eips"
   default     = []
 }
+
+#####
+
+variable "mvn_command" {
+  description = "maven command output"
+}

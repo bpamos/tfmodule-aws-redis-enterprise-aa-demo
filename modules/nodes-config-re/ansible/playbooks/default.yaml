@@ -13,10 +13,11 @@ deb_packages:
   - libltdl-dev
   - libltdl7
   - libtool
-  - libevent-openssl-2.1-6
   - libpcre3-dev 
   - libevent-dev
   - pkg-config
   - zlib1g-dev
   - libssl-dev
   - ntp
+
+    # - libevent-openssl-2.1-6

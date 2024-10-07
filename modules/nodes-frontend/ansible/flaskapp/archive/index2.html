@@ -4,7 +4,6 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Flask Java Integration</title>
-    <script src="https://cdnjs.cloudflare.com/ajax/libs/socket.io/4.1.3/socket.io.js"></script>
 </head>
 <body>
     <h1>Hello, world! This is your Flask application.</h1>
@@ -12,15 +11,16 @@
     <div id="outputContainer"></div> <!-- Placeholder for displaying output -->
 
     <script>
-        var socket = io();
-
         document.getElementById('startJavaApp').addEventListener('click', function() {
-            socket.emit('start_java_app');
-        });
-
-        socket.on('java_output', function(output) {
-            // Append the received output to the output container
-            document.getElementById('outputContainer').innerText += output;
+            fetch('/start_java_app', {
+                method: 'POST'
+            })
+            .then(response => response.text())
+            .then(output => {
+                // Update the content of the output container with the received output
+                document.getElementById('outputContainer').innerText = output;
+            })
+            .catch(error => console.error('Error starting Java app:', error));
         });
     </script>
 </body>

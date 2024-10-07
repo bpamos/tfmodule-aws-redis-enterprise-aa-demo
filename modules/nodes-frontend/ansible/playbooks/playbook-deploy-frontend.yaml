@@ -21,6 +21,11 @@
       pip:
         name: flask
 
+    - name: Install Flask-SocketIO
+      pip:
+        name: flask-socketio
+
+
     # Add tasks to copy your Flask application files to the EC2 instance
     - name: Copy Flask application files
       copy:

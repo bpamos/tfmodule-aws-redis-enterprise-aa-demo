@@ -34,8 +34,18 @@ resource "local_file" "ssh-setup" {
 }
 
 
+#### Generate Ansible Playbook
+resource "local_file" "app_py_setup" {
+    count    = var.test-node-count
+    content  = templatefile("${path.module}/ansible/flaskapp/app.py.tpl", {
+        mvn_command  = var.mvn_command
+    })
+    filename = "${path.module}/ansible/flaskapp/app.py"
+}
+
+
 # Run Ansible playbook to configure front end
-resource "null_resource" "ansible_run1" {
+resource "null_resource" "ansible_run" {
     count = var.test-node-count
     provisioner "local-exec" {
         command = "ansible-playbook ${path.module}/ansible/playbooks/playbook-deploy-frontend.yaml --private-key ${var.ssh_key_path} -i /tmp/${var.vpc_name}_test_node_${count.index}.ini"

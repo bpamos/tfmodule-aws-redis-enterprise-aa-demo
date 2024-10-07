@@ -17,7 +17,7 @@ If you dont think you need to read the detailed instructions, please click here 
 * Two new VPCs (VPC in region A & VPC in region B)
 * VPC peering between the two VPCs (inter-region VPC peering)
 * Route table association for VPC peer ID on both VPCs 
-* Any number of Redis Enterprise nodes and install Redis Enterprise software (ubuntu 18.04)
+* Any number of Redis Enterprise nodes and install Redis Enterprise software (ubuntu 20.04)
 * Test node with Redis and Memtier installed
 * DNS (NS and A records for Redis Enterprise nodes)
 * Create and Join Redis Enterprise cluster
@@ -29,7 +29,7 @@ If you dont think you need to read the detailed instructions, please click here 
     * (*note: you can run these in the terminal for more instructions* [run memtier commands](#run-memtier-cmds)
 
 ### !!!! Requirements !!!
-* Redis Enterprise Software (**Ubuntu 18.04**)
+* Redis Enterprise Software (**Ubuntu 20.04**)
 * R53 DNS_hosted_zone_id *(if you do not have one already, go get a domain name on Route53)*
 * aws access key and secret key
 * an **AWS generated** SSH key for **each region** where you are creating a cluster
@@ -117,7 +117,7 @@ There are a few important files to understand. `modules-cluster1.tf`, `modules-c
     - `vpc-peering-requestor module` (initiates vpc request from vpc1 to vpc2)
     - `vpc-peering-acceptor module` (accepts vpc request from vpc2 to vpc1)
     - `vpc-peering-routetable module` (associates vpc2 CIDR to vpc1 for vpc-peering-id)
-    - `node module` (creates and provisions ubuntu 18.04 vms with RE software installed or test vms with Redis and Memtier installed)
+    - `node module` (creates and provisions ubuntu 20.04 vms with RE software installed or test vms with Redis and Memtier installed)
     - `dns module` (creates R53 DNS with NS record and A records), 
     - `create-cluster module` (uses ansible to create and join the RE cluster via REST API, and installs RE license file)
     - `re-crdb module` (creates a crdb in cluster 1, with participating cluster, cluster 2)
@@ -127,7 +127,7 @@ There are a few important files to understand. `modules-cluster1.tf`, `modules-c
 * `modules-cluster2.tf` contains the following: 
     - `vpc module` (creates new VPC2)
     - `vpc-peering-routetable module` (associates vpc1 CIDR to vpc2 for vpc-peering-id)
-    - `node module` (creates and provisions ubuntu 18.04 vms with RE software installed or test vms with Redis and Memtier installed)
+    - `node module` (creates and provisions ubuntu 20.04 vms with RE software installed or test vms with Redis and Memtier installed)
     - `dns module` (creates R53 DNS with NS record and A records), 
     - `create-cluster module` (uses ansible to create and join the RE cluster via REST API, and installs RE license file)
     - `re-crdb-memtier module` (runs memtier benchmark cmds from tester node in vpc 2 to associated cluster 2)
@@ -188,6 +188,7 @@ There are a few important files to understand. `modules-cluster1.tf`, `modules-c
     ```bash
     # create virtual environment
     python3 -m venv ./venv
+    source ./venv/bin/activate
     # install requirements.txt file
     pip3 install -r requirements.txt
     # ensure ansible is in path (you should see an output showing ansible is there)
@@ -250,7 +251,7 @@ Remove the resources that were created.
 ## Additional Helpful Repos
 Utilized a lot of information from the following repos to create this:
 
-Terraform and Ansible repo for installing RE on ubuntu 18.04 nodes:
+Terraform and Ansible repo for installing RE on ubuntu 20.04 nodes:
 * https://github.com/Redislabs-Solution-Architects/tfmodule-aws-redis-enterprise
 
 Ansible Redis PS Repo:
@@ -269,3 +270,16 @@ mvn compile exec:java -Dexec.cleanupDaemonThreads=false -Dexec.args="--failover 
 
 
 ```
+
+### Flask app:
+Find ec2 test node public address
+go to:
+http://public_ip:5000
+you might need to go run the app by going into the ec2
+sudo su -
+cd /var/www/flash_app/
+python3 app1.py
+
+You need to 
+pip install flask-socketio
+into the ec2

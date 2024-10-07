@@ -46,38 +46,16 @@ output "test-node-eip-public-dns1" {
 }
 
 
-# #### Create Test nodes
-# #### Ansible playbooks configure Test node with Redis and Memtier
-# module "nodes-config-redisoss-1" {
-#     source             = "./modules/nodes-config-redisoss"
-#     providers = {
-#       aws = aws.a
-#     }
-#     ssh_key_name       = var.ssh_key_name1
-#     ssh_key_path       = var.ssh_key_path1
-#     test_instance_type = var.test_instance_type
-#     test-node-count    = var.test-node-count
-#     ### vars pulled from previous modules
-#     ## from vpc module outputs 
-#     vpc_name           = module.vpc1.vpc-name
-#     vpc_id             = module.vpc1.vpc-id
-#     aws_eips           = module.nodes-tester1.node-eips
-
-#     depends_on = [
-#       module.nodes-tester1
-#     ]
-# }
-
-
-#### Deploy front end on test node
-#### Ansible playbooks configure Test node with front end
-module "nodes-deploy-frontend" {
-    source             = "./modules/nodes-frontend"
+#### Create Test nodes
+#### Ansible playbooks configure Test node with Redis and Memtier
+module "nodes-config-redisoss-1" {
+    source             = "./modules/nodes-config-redisoss"
     providers = {
       aws = aws.a
     }
     ssh_key_name       = var.ssh_key_name1
     ssh_key_path       = var.ssh_key_path1
+    test_instance_type = var.test_instance_type
     test-node-count    = var.test-node-count
     ### vars pulled from previous modules
     ## from vpc module outputs 
@@ -86,7 +64,31 @@ module "nodes-deploy-frontend" {
     aws_eips           = module.nodes-tester1.node-eips
 
     depends_on = [
-      module.nodes-tester1,
-      #module.nodes-config-redisoss-1
+      module.nodes-tester1
     ]
 }
+
+
+# #### Deploy front end on test node
+# #### Ansible playbooks configure Test node with front end
+# module "nodes-deploy-frontend-2" {
+#     source             = "./modules/nodes-frontend"
+#     providers = {
+#       aws = aws.a
+#     }
+#     ssh_key_name       = var.ssh_key_name1
+#     ssh_key_path       = var.ssh_key_path1
+#     test-node-count    = var.test-node-count
+#     ### vars pulled from previous modules
+#     ## from vpc module outputs 
+#     vpc_name           = module.vpc1.vpc-name
+#     vpc_id             = module.vpc1.vpc-id
+#     aws_eips           = module.nodes-tester1.node-eips
+#     mvn_command        = module.nodes-config-jedis-1.mvn_command
+
+#     depends_on = [
+#       module.nodes-tester1,
+#       module.nodes-config-redisoss-1,
+#       module.nodes-config-jedis-1
+#     ]
+# }

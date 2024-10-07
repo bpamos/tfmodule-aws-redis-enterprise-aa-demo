@@ -77,22 +77,22 @@ output "aws_security_group_id1" {
   value = module.security-group1.aws_security_group_id
 }
 
-# ########### DNS Module
-# #### Create DNS (NS record, A records for each RE node and its eip)
-# #### Currently using existing dns hosted zone
-# module "dns1" {
-#     source             = "./modules/dns"
-#     providers = {
-#       aws = aws.a
-#     }
-#     dns_hosted_zone_id = var.dns_hosted_zone_id
-#     data-node-count    = var.data-node-count
-#     ### vars pulled from previous modules
-#     vpc_name           = module.vpc1.vpc-name
-#     re-data-node-eips  = module.nodes-re1.node-eips
-# }
+########### DNS Module
+#### Create DNS (NS record, A records for each RE node and its eip)
+#### Currently using existing dns hosted zone
+module "dns1" {
+    source             = "./modules/dns"
+    providers = {
+      aws = aws.a
+    }
+    dns_hosted_zone_id = var.dns_hosted_zone_id
+    data-node-count    = var.data-node-count
+    ### vars pulled from previous modules
+    vpc_name           = module.vpc1.vpc-name
+    re-data-node-eips  = module.nodes-re1.node-eips
+}
 
-# #### dns FQDN output used in future modules
-# output "dns-ns-record-name1" {
-#   value = module.dns1.dns-ns-record-name
-# }
+#### dns FQDN output used in future modules
+output "dns-ns-record-name1" {
+  value = module.dns1.dns-ns-record-name
+}
